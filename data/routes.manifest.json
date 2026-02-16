@@ -1,0 +1,696 @@
+{
+  "generatedAt": "2026-02-16T09:33:07.653Z",
+  "homepageSlug": "xuechun-tao",
+  "routeSlugs": [
+    "xuechun-tao",
+    "陶雪纯",
+    "01-market-pipeline-dashboard-1",
+    "ai-cross-border-compliance",
+    "information-1",
+    "信息"
+  ],
+  "routes": [
+    {
+      "setId": "K3898273367",
+      "slug": "xuechun-tao",
+      "title": "Xuechun Tao",
+      "allChildPageIds": [
+        "C2244050512",
+        "Z2024047029",
+        "W2880707081",
+        "K3926630231",
+        "R0453706614",
+        "A2841610474",
+        "X1870388550",
+        "J1465115079",
+        "J3353905303",
+        "I3444030817",
+        "X3927726767",
+        "K3607032579",
+        "R2299649536",
+        "P4151045667",
+        "R3830921788",
+        "J4112006442",
+        "I0824865306",
+        "F3976918942",
+        "P0700590206",
+        "X1978055183",
+        "P3894460573",
+        "W2152567637"
+      ],
+      "pageIds": [
+        "C2244050512",
+        "Z2024047029",
+        "W2880707081",
+        "K3926630231",
+        "R0453706614",
+        "A2841610474",
+        "X1870388550",
+        "J1465115079",
+        "J3353905303",
+        "I3444030817",
+        "X3927726767",
+        "K3607032579",
+        "R2299649536",
+        "P4151045667",
+        "R3830921788",
+        "J4112006442",
+        "I0824865306",
+        "F3976918942",
+        "P0700590206",
+        "X1978055183",
+        "P3894460573",
+        "W2152567637"
+      ],
+      "pinnedPageIds": [
+        "C2244050512",
+        "W2152567637"
+      ],
+      "contentPageIds": [
+        "Z2024047029",
+        "W2880707081",
+        "K3926630231",
+        "R0453706614",
+        "A2841610474",
+        "X1870388550",
+        "J1465115079",
+        "J3353905303",
+        "I3444030817",
+        "X3927726767",
+        "K3607032579",
+        "R2299649536",
+        "P4151045667",
+        "R3830921788",
+        "J4112006442",
+        "I0824865306",
+        "F3976918942",
+        "P0700590206",
+        "X1978055183",
+        "P3894460573"
+      ]
+    },
+    {
+      "setId": "U1393028514",
+      "slug": "陶雪纯",
+      "title": "陶雪纯",
+      "allChildPageIds": [
+        "G0376300820",
+        "Z3804070194"
+      ],
+      "pageIds": [
+        "G0376300820",
+        "Z3804070194"
+      ],
+      "pinnedPageIds": [
+        "G0376300820",
+        "Z3804070194"
+      ],
+      "contentPageIds": []
+    },
+    {
+      "setId": "H0871199229",
+      "slug": "01-market-pipeline-dashboard-1",
+      "title": "01 market pipeline dashboard",
+      "allChildPageIds": [
+        "B3399625901",
+        "L2615813753"
+      ],
+      "pageIds": [
+        "B3399625901",
+        "L2615813753"
+      ],
+      "pinnedPageIds": [
+        "B3399625901",
+        "L2615813753"
+      ],
+      "contentPageIds": []
+    },
+    {
+      "setId": "V4016078512",
+      "slug": "ai-cross-border-compliance",
+      "title": "AI Cross-border Compliance",
+      "allChildPageIds": [
+        "X3900671243",
+        "F0367519672"
+      ],
+      "pageIds": [
+        "X3900671243",
+        "F0367519672"
+      ],
+      "pinnedPageIds": [
+        "X3900671243",
+        "F0367519672"
+      ],
+      "contentPageIds": []
+    },
+    {
+      "setId": "D1206349348",
+      "slug": "information-1",
+      "title": "Information",
+      "allChildPageIds": [
+        "P1549482964",
+        "F0090685616",
+        "L0401917115"
+      ],
+      "pageIds": [
+        "P1549482964",
+        "F0090685616",
+        "L0401917115"
+      ],
+      "pinnedPageIds": [
+        "P1549482964",
+        "F0090685616"
+      ],
+      "contentPageIds": [
+        "L0401917115"
+      ]
+    },
+    {
+      "setId": "F3778934631",
+      "slug": "信息",
+      "title": "信息",
+      "allChildPageIds": [
+        "W4045354768",
+        "J3800279983"
+      ],
+      "pageIds": [
+        "W4045354768",
+        "J3800279983"
+      ],
+      "pinnedPageIds": [
+        "W4045354768",
+        "J3800279983"
+      ],
+      "contentPageIds": []
+    }
+  ],
+  "redirects": {
+    "/": "/xuechun-tao"
+  },
+  "pageSlugToSetSlug": {
+    "top-nav---desktop": "xuechun-tao",
+    "header-sales-experience-in-fintech": "xuechun-tao",
+    "01-markets-pipeline-dashboard-copy": "xuechun-tao",
+    "header-sales-experience-in-fintech-copy": "xuechun-tao",
+    "01-markets-pipeline-dashboard-copy-copy": "xuechun-tao",
+    "01-markets-pipeline-dashboard": "xuechun-tao",
+    "02-sales-crm-redesign": "xuechun-tao",
+    "03-loan-monetization-impact-evaluation-workflow": "xuechun-tao",
+    "04-intraday-credit-control": "xuechun-tao",
+    "header-digital-arts-in-branding": "xuechun-tao",
+    "05-nike-basketball-interactive-experience": "xuechun-tao",
+    "06-plaza-lively-floor-game": "xuechun-tao",
+    "header-my-featured": "xuechun-tao",
+    "07-tie-dyed-rivival": "xuechun-tao",
+    "08-female-retraining-program-copy-1": "xuechun-tao",
+    "09-citi-tech-engineer-annual-report-1": "xuechun-tao",
+    "header-get-hands-dirty": "xuechun-tao",
+    "10-before-wilderness-is-gone": "xuechun-tao",
+    "11-cow-emissions-of": "xuechun-tao",
+    "12-poetic-waiting": "xuechun-tao",
+    "footer": "xuechun-tao",
+    "top-nav---mobile": "xuechun-tao",
+    "顶部导航": "陶雪纯",
+    "顶部导航-—-mobile": "陶雪纯",
+    "top-nav-—-desktop": "01-market-pipeline-dashboard-1",
+    "top-nav-—-mobile": "01-market-pipeline-dashboard-1",
+    "top-nav-—-desktop-1": "ai-cross-border-compliance",
+    "top-nav-—-mobile-1": "ai-cross-border-compliance",
+    "top-nav-—-desktop-copy-1": "information-1",
+    "top-nav-—-mobile-copy": "information-1",
+    "information": "information-1",
+    "top-nav-—-desktop-copy": "信息",
+    "top-nav-—-mobile-copy-copy": "信息"
+  },
+  "removedPages": [],
+  "mediaByHash": {
+    "M2265823430982709639689707861503": {
+      "hash": "M2265823430982709639689707861503",
+      "name": "Rectangle-725.png",
+      "width": 1066,
+      "height": 82,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/M2265823430982709639689707861503/Rectangle-725.png"
+    },
+    "G2416641908947146866215719679487": {
+      "hash": "G2416641908947146866215719679487",
+      "name": "cursor.png",
+      "width": 408,
+      "height": 409,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/G2416641908947146866215719679487/cursor.png"
+    },
+    "E2416596786661616070460864607743": {
+      "hash": "E2416596786661616070460864607743",
+      "name": "background.png",
+      "width": 2880,
+      "height": 1620,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/E2416596786661616070460864607743/background.png"
+    },
+    "W2416656387464528927516011148799": {
+      "hash": "W2416656387464528927516011148799",
+      "name": "cursor.png",
+      "width": 56,
+      "height": 57,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/W2416656387464528927516011148799/cursor.png"
+    },
+    "O2701928164361042364328751543807": {
+      "hash": "O2701928164361042364328751543807",
+      "name": "Group-4190.png",
+      "width": 1898,
+      "height": 1844,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/O2701928164361042364328751543807/Group-4190.png"
+    },
+    "O2677747447050820858400605615615": {
+      "hash": "O2677747447050820858400605615615",
+      "name": "2025-12-03-10.29.12.png",
+      "width": 2520,
+      "height": 2157,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/O2677747447050820858400605615615/2025-12-03-10.29.12.png"
+    },
+    "Y2416590985750900699165587027455": {
+      "hash": "Y2416590985750900699165587027455",
+      "name": "background.png",
+      "width": 2880,
+      "height": 1620,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/Y2416590985750900699165587027455/background.png"
+    },
+    "Z2416660951207459507332790498815": {
+      "hash": "Z2416660951207459507332790498815",
+      "name": "WORKFLOW-SPONSOR.png",
+      "width": 2843,
+      "height": 2321,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/Z2416660951207459507332790498815/WORKFLOW-SPONSOR.png"
+    },
+    "R2414101980039158243174012827135": {
+      "hash": "R2414101980039158243174012827135",
+      "name": "PSE-Audit-log-1.png",
+      "width": 1620,
+      "height": 842,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/R2414101980039158243174012827135/PSE-Audit-log-1.png"
+    },
+    "W2414101980076051731321431930367": {
+      "hash": "W2414101980076051731321431930367",
+      "name": "PSE_SR-1.png",
+      "width": 1620,
+      "height": 844,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/W2414101980076051731321431930367/PSE_SR-1.png"
+    },
+    "T2416594162538484608982309025279": {
+      "hash": "T2416594162538484608982309025279",
+      "name": "background.png",
+      "width": 2880,
+      "height": 1620,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/T2416594162538484608982309025279/background.png"
+    },
+    "F2414127484341493857336691144191": {
+      "hash": "F2414127484341493857336691144191",
+      "name": "seedplaza.gif",
+      "width": 960,
+      "height": 540,
+      "fileType": "gif",
+      "mimeType": "image/gif",
+      "url": "https://freight.cargo.site/t/original/i/F2414127484341493857336691144191/seedplaza.gif"
+    },
+    "V2414124204657971504368090232319": {
+      "hash": "V2414124204657971504368090232319",
+      "name": ".gif",
+      "width": 692,
+      "height": 388,
+      "fileType": "gif",
+      "mimeType": "image/gif",
+      "url": "https://freight.cargo.site/t/original/i/V2414124204657971504368090232319/.gif"
+    },
+    "J2414147224460581550959809148415": {
+      "hash": "J2414147224460581550959809148415",
+      "name": "lebron.GIF",
+      "width": 912,
+      "height": 540,
+      "fileType": "GIF",
+      "mimeType": "image/gif",
+      "url": "https://freight.cargo.site/t/original/i/J2414147224460581550959809148415/lebron.GIF"
+    },
+    "Z2268128878881112036878504572415": {
+      "hash": "Z2268128878881112036878504572415",
+      "name": "6.jpg",
+      "width": 3408,
+      "height": 2106,
+      "fileType": "jpg",
+      "mimeType": "image/jpeg",
+      "url": "https://freight.cargo.site/t/original/i/Z2268128878881112036878504572415/6.jpg"
+    },
+    "L2268128878899558780952214124031": {
+      "hash": "L2268128878899558780952214124031",
+      "name": "4.jpg",
+      "width": 3408,
+      "height": 2106,
+      "fileType": "jpg",
+      "mimeType": "image/jpeg",
+      "url": "https://freight.cargo.site/t/original/i/L2268128878899558780952214124031/4.jpg"
+    },
+    "C2420292316832723128265134716415": {
+      "hash": "C2420292316832723128265134716415",
+      "name": "1.jpg",
+      "width": 3408,
+      "height": 2106,
+      "fileType": "jpg",
+      "mimeType": "image/jpeg",
+      "url": "https://freight.cargo.site/t/original/i/C2420292316832723128265134716415/1.jpg"
+    },
+    "Q2420318447328233068572252190207": {
+      "hash": "Q2420318447328233068572252190207",
+      "name": "copy_71FD2A55-98F7-4AA4-BAA7-AEDD504B4D46-ezgif.com-video-to-gif-converter.gif",
+      "width": 800,
+      "height": 448,
+      "fileType": "gif",
+      "mimeType": "image/gif",
+      "url": "https://freight.cargo.site/t/original/i/Q2420318447328233068572252190207/copy_71FD2A55-98F7-4AA4-BAA7-AEDD504B4D46-ezgif.com-video-to-gif-converter.gif"
+    },
+    "C2420318447383573300793380845055": {
+      "hash": "C2420318447383573300793380845055",
+      "name": "copy_D63DC6B8-CF14-4CF3-A375-40B8F89DAB52-ezgif.com-video-to-gif-converter.gif",
+      "width": 800,
+      "height": 448,
+      "fileType": "gif",
+      "mimeType": "image/gif",
+      "url": "https://freight.cargo.site/t/original/i/C2420318447383573300793380845055/copy_D63DC6B8-CF14-4CF3-A375-40B8F89DAB52-ezgif.com-video-to-gif-converter.gif"
+    },
+    "N2414062075138487535060189066751": {
+      "hash": "N2414062075138487535060189066751",
+      "name": "crm-light-crop.png",
+      "width": 2880,
+      "height": 2475,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/N2414062075138487535060189066751/crm-light-crop.png"
+    },
+    "F2414062075175381023207608169983": {
+      "hash": "F2414062075175381023207608169983",
+      "name": "crm-dark-crop.png",
+      "width": 2880,
+      "height": 2474,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/F2414062075175381023207608169983/crm-dark-crop.png"
+    },
+    "D2414054640768584436784115889663": {
+      "hash": "D2414054640768584436784115889663",
+      "name": "03-Markets-Pipeline-Dashbaord-Equity-Sales-Manager-opportunity-1.png",
+      "width": 2880,
+      "height": 2576,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/D2414054640768584436784115889663/03-Markets-Pipeline-Dashbaord-Equity-Sales-Manager-opportunity-1.png"
+    },
+    "U2414054640860818157152663647743": {
+      "hash": "U2414054640860818157152663647743",
+      "name": "01-cluster.png",
+      "width": 2880,
+      "height": 2576,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/U2414054640860818157152663647743/01-cluster.png"
+    },
+    "X855421444815825990992220990044": {
+      "hash": "X855421444815825990992220990044",
+      "name": "vertical.svg",
+      "width": 1875,
+      "height": 2300,
+      "fileType": "svg",
+      "mimeType": "image/svg+xml",
+      "url": "https://freight.cargo.site/t/original/i/X855421444815825990992220990044/vertical.svg"
+    },
+    "Z2423473018981746082817371420159": {
+      "hash": "Z2423473018981746082817371420159",
+      "name": "IMG_2899.JPG",
+      "width": 1080,
+      "height": 1440,
+      "fileType": "JPG",
+      "mimeType": "image/jpeg",
+      "url": "https://freight.cargo.site/t/original/i/Z2423473018981746082817371420159/IMG_2899.JPG"
+    },
+    "D2423474136116567186667817285119": {
+      "hash": "D2423474136116567186667817285119",
+      "name": "IMG_2900.JPG",
+      "width": 1080,
+      "height": 1440,
+      "fileType": "JPG",
+      "mimeType": "image/jpeg",
+      "url": "https://freight.cargo.site/t/original/i/D2423474136116567186667817285119/IMG_2900.JPG"
+    },
+    "L2423481818318476915231716423167": {
+      "hash": "L2423481818318476915231716423167",
+      "name": "2025-06-26-21.39.58.png",
+      "width": 1482,
+      "height": 2042,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/L2423481818318476915231716423167/2025-06-26-21.39.58.png"
+    },
+    "G2423482929679467124011072632319": {
+      "hash": "G2423482929679467124011072632319",
+      "name": "IMG_2901.JPG",
+      "width": 969,
+      "height": 1078,
+      "fileType": "JPG",
+      "mimeType": "image/jpeg",
+      "url": "https://freight.cargo.site/t/original/i/G2423482929679467124011072632319/IMG_2901.JPG"
+    },
+    "H2423486293406355476800390706687": {
+      "hash": "H2423486293406355476800390706687",
+      "name": "2025-06-26-21.43.53.png",
+      "width": 1618,
+      "height": 2136,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/H2423486293406355476800390706687/2025-06-26-21.43.53.png"
+    },
+    "Z2423494222315020447155833157119": {
+      "hash": "Z2423494222315020447155833157119",
+      "name": "2025-06-26-21.51.05.png",
+      "width": 1610,
+      "height": 2158,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/Z2423494222315020447155833157119/2025-06-26-21.51.05.png"
+    },
+    "L2423495688572919890033252906495": {
+      "hash": "L2423495688572919890033252906495",
+      "name": "2025-06-26-21.51.52.png",
+      "width": 940,
+      "height": 1533,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/L2423495688572919890033252906495/2025-06-26-21.51.52.png"
+    },
+    "O2423504420505247877112896304639": {
+      "hash": "O2423504420505247877112896304639",
+      "name": ".png",
+      "width": 32,
+      "height": 33,
+      "fileType": "png",
+      "mimeType": "image/png",
+      "url": "https://freight.cargo.site/t/original/i/O2423504420505247877112896304639/.png"
+    },
+    "Z2268200431052809089246499845631": {
+      "hash": "Z2268200431052809089246499845631",
+      "name": "female-retraning-1.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/Z2268200431052809089246499845631/female-retraning-1.png"
+    },
+    "N2268200431089702577393918948863": {
+      "hash": "N2268200431089702577393918948863",
+      "name": "female-retraning-2.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/N2268200431089702577393918948863/female-retraning-2.png"
+    },
+    "Q2268214128000091491546798896639": {
+      "hash": "Q2268214128000091491546798896639",
+      "name": "Frame-8.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/Q2268214128000091491546798896639/Frame-8.png"
+    },
+    "K2268214127907857771178251138559": {
+      "hash": "K2268214127907857771178251138559",
+      "name": "Frame-14.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/K2268214127907857771178251138559/Frame-14.png"
+    },
+    "L2268214128055431723767927551487": {
+      "hash": "L2268214128055431723767927551487",
+      "name": "Group-3508.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/L2268214128055431723767927551487/Group-3508.png"
+    },
+    "C2268214128036984979694217999871": {
+      "hash": "C2268214128036984979694217999871",
+      "name": "Frame-2.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/C2268214128036984979694217999871/Frame-2.png"
+    },
+    "K2268214127963198003399379793407": {
+      "hash": "K2268214127963198003399379793407",
+      "name": "Frame-12.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/K2268214127963198003399379793407/Frame-12.png"
+    },
+    "W2268214127944751259325670241791": {
+      "hash": "W2268214127944751259325670241791",
+      "name": "Frame-13.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/W2268214127944751259325670241791/Frame-13.png"
+    },
+    "D2268214128018538235620508448255": {
+      "hash": "D2268214128018538235620508448255",
+      "name": "Frame-5.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/D2268214128018538235620508448255/Frame-5.png"
+    },
+    "P2268214127981644747473089345023": {
+      "hash": "P2268214127981644747473089345023",
+      "name": "Frame-11.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/P2268214127981644747473089345023/Frame-11.png"
+    },
+    "Q2420381963803063707880210707967": {
+      "hash": "Q2420381963803063707880210707967",
+      "name": "pause.gif",
+      "width": null,
+      "height": null,
+      "fileType": "gif",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/Q2420381963803063707880210707967/pause.gif"
+    },
+    "Y2420373658839074050881849013759": {
+      "hash": "Y2420373658839074050881849013759",
+      "name": "haiku.gif",
+      "width": null,
+      "height": null,
+      "fileType": "gif",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/Y2420373658839074050881849013759/haiku.gif"
+    },
+    "O2420369272314013787192732038655": {
+      "hash": "O2420369272314013787192732038655",
+      "name": "forage.gif",
+      "width": null,
+      "height": null,
+      "fileType": "gif",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/O2420369272314013787192732038655/forage.gif"
+    },
+    "X2420366438045573838014964446719": {
+      "hash": "X2420366438045573838014964446719",
+      "name": "nature-meal.gif",
+      "width": null,
+      "height": null,
+      "fileType": "gif",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/X2420366438045573838014964446719/nature-meal.gif"
+    },
+    "U2431521322888014694099278247423": {
+      "hash": "U2431521322888014694099278247423",
+      "name": "2025-07-01-22.01.15-min.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/U2431521322888014694099278247423/2025-07-01-22.01.15-min.png"
+    },
+    "Z2431515419726996922231956059647": {
+      "hash": "Z2431515419726996922231956059647",
+      "name": "cowperformance-ezgif.com-video-to-gif-converter.gif",
+      "width": null,
+      "height": null,
+      "fileType": "gif",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/Z2431515419726996922231956059647/cowperformance-ezgif.com-video-to-gif-converter.gif"
+    },
+    "F2431501556648337392103435154943": {
+      "hash": "F2431501556648337392103435154943",
+      "name": "2025-07-01-21.59.30-min.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/F2431501556648337392103435154943/2025-07-01-21.59.30-min.png"
+    },
+    "E2431512851589733724461889631743": {
+      "hash": "E2431512851589733724461889631743",
+      "name": "ezgif.com-animated-gif-maker.gif",
+      "width": null,
+      "height": null,
+      "fileType": "gif",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/E2431512851589733724461889631743/ezgif.com-animated-gif-maker.gif"
+    },
+    "O2431521449229764854935997265407": {
+      "hash": "O2431521449229764854935997265407",
+      "name": "Group-3.png",
+      "width": null,
+      "height": null,
+      "fileType": "png",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/O2431521449229764854935997265407/Group-3.png"
+    },
+    "Z2431558503555073852712809805311": {
+      "hash": "Z2431558503555073852712809805311",
+      "name": "08.gif",
+      "width": null,
+      "height": null,
+      "fileType": "gif",
+      "mimeType": null,
+      "url": "https://freight.cargo.site/t/original/i/Z2431558503555073852712809805311/08.gif"
+    }
+  }
+}

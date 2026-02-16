@@ -1,0 +1,31 @@
+@font-face {
+  font-display: block;
+  font-family: "Diatype Variable";
+  src: url("https://type.cargo.site/files/Cargo-DiatypePlusVariable.woff2") format("woff2-variations");
+  font-style: normal;
+  font-weight: 200 1000;
+}
+
+@font-face {
+  font-display: block;
+  font-family: "Diatype Variable";
+  src: url("https://type.cargo.site/files/Cargo-DiatypePlusVariable-Italic.woff2") format("woff2-variations");
+  font-style: italic;
+  font-weight: 200 1000;
+}
+
+@font-face {
+  font-display: block;
+  font-family: "Diatype Mono Variable";
+  src: url("https://type.cargo.site/files/Cargo-DiatypePlusVariable.woff2") format("woff2-variations");
+  font-style: normal;
+  font-weight: 200 700;
+}
+
+@font-face {
+  font-display: block;
+  font-family: "Diatype Mono Variable";
+  src: url("https://type.cargo.site/files/Cargo-DiatypePlusVariable-Italic.woff2") format("woff2-variations");
+  font-style: italic;
+  font-weight: 200 700;
+}
