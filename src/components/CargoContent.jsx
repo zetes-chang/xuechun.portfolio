@@ -3,11 +3,446 @@ import { useNavigate } from 'react-router-dom';
 import { localAssetByHash, localAssetByRemoteUrl, manifest, state } from '../lib/cargoData';
 import { transformCargoHtml } from '../lib/transformCargoHtml';
 
+const HERO_PURL = 'header-sales-experience-in-fintech';
+const BIO_PURL = 'information';
+const BIO_KALEIDOSCOPE_SOURCE = '/assets/local/bio-kaleidoscope-source.jpg';
+const HERO_INTRO_LINE = "Hey, I'm Xuechun";
+const HERO_ROTATING_PREFIX = 'I do:';
+const HERO_LEAD_SPACE = '\u2002';
+const HERO_TYPEWRITER_LINES = [
+  'AI-native SaaS UX',
+  'Cross-border compliance',
+  'Fintech dashboard UX',
+  'Loan workflow design',
+  'Data-product storytelling',
+  'Enterprise UX systems',
+  'Research-driven design',
+  'B2B growth journeys',
+  'Interactive branding',
+  'Complex flows, simplified'
+];
+
 function isModifiedEvent(event) {
   return event.metaKey || event.altKey || event.ctrlKey || event.shiftKey;
 }
 
-export default function CargoContent({ html, projectNumber = null }) {
+let sharedLightbox = null;
+
+function ensureImageLightbox() {
+  if (sharedLightbox) return sharedLightbox;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'image-lightbox';
+  overlay.setAttribute('aria-hidden', 'true');
+
+  const stage = document.createElement('div');
+  stage.className = 'image-lightbox-stage';
+
+  const image = document.createElement('img');
+  image.className = 'image-lightbox-image';
+  image.alt = '';
+
+  const controls = document.createElement('div');
+  controls.className = 'image-lightbox-controls';
+
+  const zoomOut = document.createElement('button');
+  zoomOut.type = 'button';
+  zoomOut.className = 'image-lightbox-btn';
+  zoomOut.textContent = '−';
+  zoomOut.setAttribute('aria-label', 'Zoom out');
+
+  const zoomIn = document.createElement('button');
+  zoomIn.type = 'button';
+  zoomIn.className = 'image-lightbox-btn';
+  zoomIn.textContent = '+';
+  zoomIn.setAttribute('aria-label', 'Zoom in');
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'image-lightbox-btn image-lightbox-close';
+  close.textContent = 'Close';
+  close.setAttribute('aria-label', 'Close');
+
+  controls.append(zoomOut, zoomIn, close);
+  stage.append(image, controls);
+  overlay.appendChild(stage);
+  document.body.appendChild(overlay);
+
+  let scale = 1;
+  const minScale = 1;
+  const maxScale = 4;
+  const step = 0.2;
+
+  const clamp = (value) => Math.max(minScale, Math.min(maxScale, value));
+  const setScale = (value) => {
+    scale = clamp(value);
+    image.style.transform = `scale(${scale})`;
+  };
+
+  const open = ({ src, alt }) => {
+    if (!src) return;
+    image.src = src;
+    image.alt = alt || '';
+    setScale(1);
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
+  };
+
+  const closeLightbox = () => {
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    image.src = '';
+    image.alt = '';
+    document.body.classList.remove('lightbox-open');
+  };
+
+  const onKeydown = (event) => {
+    if (!overlay.classList.contains('is-open')) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeLightbox();
+      return;
+    }
+    if (event.key === '+' || event.key === '=') {
+      event.preventDefault();
+      setScale(scale + step);
+      return;
+    }
+    if (event.key === '-') {
+      event.preventDefault();
+      setScale(scale - step);
+    }
+  };
+
+  const onWheel = (event) => {
+    if (!overlay.classList.contains('is-open')) return;
+    event.preventDefault();
+    const delta = event.deltaY < 0 ? step : -step;
+    setScale(scale + delta);
+  };
+
+  const onOverlayClick = (event) => {
+    if (event.target === overlay) {
+      closeLightbox();
+    }
+  };
+
+  zoomIn.addEventListener('click', () => setScale(scale + step));
+  zoomOut.addEventListener('click', () => setScale(scale - step));
+  close.addEventListener('click', closeLightbox);
+  overlay.addEventListener('click', onOverlayClick);
+  stage.addEventListener('wheel', onWheel, { passive: false });
+  stage.addEventListener('dblclick', () => setScale(scale >= 2 ? 1 : 2));
+  document.addEventListener('keydown', onKeydown);
+
+  sharedLightbox = { open };
+  return sharedLightbox;
+}
+
+function mountImageLightbox(root, cleanups) {
+  const lightbox = ensureImageLightbox();
+  const images = Array.from(root.querySelectorAll('.cargo-media-item img'));
+  const detachList = [];
+
+  for (const image of images) {
+    image.classList.add('zoomable-image');
+
+    const onClick = (event) => {
+      if (event.defaultPrevented || isModifiedEvent(event)) return;
+      event.preventDefault();
+      lightbox.open({
+        src: image.currentSrc || image.src,
+        alt: image.alt || ''
+      });
+    };
+
+    image.addEventListener('click', onClick);
+    detachList.push(() => image.removeEventListener('click', onClick));
+  }
+
+  cleanups.push(() => {
+    detachList.forEach((detach) => detach());
+  });
+}
+
+function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY) {
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const coverScale = Math.max(width / image.width, height / image.height) * 1.52;
+  const drawWidth = image.width * coverScale;
+  const drawHeight = image.height * coverScale;
+  const dx = pointerX - 0.5;
+  const dy = pointerY - 0.5;
+  const pointerAngle = Math.atan2(dy, dx);
+  const pointerRadius = Math.min(1, Math.hypot(dx, dy) / 0.7071);
+  const panRangeX = Math.max(0, (drawWidth - width) * 0.5);
+  const panRangeY = Math.max(0, (drawHeight - height) * 0.5);
+  const radialPanStrength = pointerRadius * 0.68;
+  const panX = Math.cos(pointerAngle) * panRangeX * radialPanStrength;
+  const panY = Math.sin(pointerAngle) * panRangeY * radialPanStrength;
+  const baseRotation = pointerAngle * 0.34;
+  const twist = (pointerRadius - 0.16) * 0.2;
+  const slices = 12;
+  const sliceAngle = (Math.PI * 2) / slices;
+  const radius = Math.hypot(width, height) * 0.92;
+
+  ctx.clearRect(0, 0, width, height);
+
+  // Base full-bleed draw prevents edge gaps when slices rotate.
+  ctx.save();
+  ctx.translate(centerX, centerY);
+  ctx.rotate(baseRotation * 0.35);
+  ctx.drawImage(image, -drawWidth / 2 - panX, -drawHeight / 2 - panY, drawWidth, drawHeight);
+  ctx.restore();
+
+  for (let index = 0; index < slices; index += 1) {
+    const start = index * sliceAngle + baseRotation;
+    const end = start + sliceAngle;
+    const mid = (start + end) * 0.5;
+    const spokeDrift =
+      Math.cos(pointerAngle - mid) * pointerRadius * Math.min(width, height) * 0.11;
+    const sourceOffsetX = panX + Math.cos(mid) * spokeDrift;
+    const sourceOffsetY = panY + Math.sin(mid) * spokeDrift;
+    const sliceTwist = (index % 2 === 0 ? 1 : -1) * twist;
+
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, radius, start, end, false);
+    ctx.closePath();
+    ctx.clip();
+
+    if (index % 2 === 1) {
+      ctx.scale(-1, 1);
+    }
+
+    ctx.rotate(sliceTwist);
+    ctx.drawImage(
+      image,
+      -drawWidth / 2 - sourceOffsetX,
+      -drawHeight / 2 - sourceOffsetY,
+      drawWidth,
+      drawHeight
+    );
+    ctx.restore();
+  }
+
+  const vignette = ctx.createRadialGradient(
+    centerX,
+    centerY,
+    Math.min(width, height) * 0.08,
+    centerX,
+    centerY,
+    Math.max(width, height) * 0.72
+  );
+  vignette.addColorStop(0, 'rgba(255, 255, 255, 0)');
+  vignette.addColorStop(1, 'rgba(25, 20, 38, 0.2)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, width, height);
+
+  const sheen = ctx.createLinearGradient(0, 0, width, height);
+  sheen.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
+  sheen.addColorStop(0.32, 'rgba(255, 255, 255, 0.02)');
+  sheen.addColorStop(0.68, 'rgba(255, 255, 255, 0)');
+  sheen.addColorStop(1, 'rgba(255, 255, 255, 0.08)');
+  ctx.fillStyle = sheen;
+  ctx.fillRect(0, 0, width, height);
+}
+
+function mountBioKaleidoscope(root, cleanups) {
+  const canvas = root.querySelector('.bio-kaleidoscope-canvas');
+  if (!(canvas instanceof HTMLCanvasElement)) return;
+
+  const sourceImageElement =
+    root.querySelector('.bio-photo-grid .cargo-media-item img') || root.querySelector('.cargo-media-item img');
+  const sourceUrl = BIO_KALEIDOSCOPE_SOURCE || sourceImageElement?.currentSrc || sourceImageElement?.src || '';
+  if (!sourceUrl) return;
+
+  const image = new Image();
+  image.decoding = 'async';
+
+  const context = canvas.getContext('2d', { alpha: false });
+  if (!context) return;
+
+  let width = 0;
+  let height = 0;
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
+  let currentX = 0.5;
+  let currentY = 0.5;
+  let targetX = 0.5;
+  let targetY = 0.5;
+  let rafId = 0;
+  let loaded = false;
+
+  const updateSize = () => {
+    dpr = Math.max(1, window.devicePixelRatio || 1);
+    width = Math.max(1, Math.round(canvas.clientWidth));
+    height = Math.max(1, Math.round(canvas.clientHeight));
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+    if (loaded) {
+      drawKaleidoscopeFrame(context, image, width, height, currentX, currentY);
+    }
+  };
+
+  const scheduleRender = () => {
+    if (rafId) return;
+    rafId = window.requestAnimationFrame(() => {
+      rafId = 0;
+      if (!loaded) return;
+      currentX += (targetX - currentX) * 0.14;
+      currentY += (targetY - currentY) * 0.14;
+      drawKaleidoscopeFrame(context, image, width, height, currentX, currentY);
+      if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
+        scheduleRender();
+      }
+    });
+  };
+
+  const setPointerTarget = (clientX, clientY) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+    targetX = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    targetY = Math.min(1, Math.max(0, (clientY - rect.top) / rect.height));
+    scheduleRender();
+  };
+
+  const onPointerMove = (event) => {
+    setPointerTarget(event.clientX, event.clientY);
+  };
+
+  const onPointerLeave = () => {
+    targetX = 0.5;
+    targetY = 0.5;
+    scheduleRender();
+  };
+
+  const onResize = () => {
+    updateSize();
+    scheduleRender();
+  };
+
+  image.addEventListener('load', () => {
+    loaded = true;
+    updateSize();
+    scheduleRender();
+  });
+
+  image.src = sourceUrl;
+  canvas.addEventListener('pointermove', onPointerMove, { passive: true });
+  canvas.addEventListener('pointerleave', onPointerLeave);
+  window.addEventListener('resize', onResize);
+
+  cleanups.push(() => {
+    canvas.removeEventListener('pointermove', onPointerMove);
+    canvas.removeEventListener('pointerleave', onPointerLeave);
+    window.removeEventListener('resize', onResize);
+    if (rafId) {
+      window.cancelAnimationFrame(rafId);
+    }
+  });
+}
+
+function mountHeroTypewriter(root, cleanups) {
+  const header = root.querySelector('.section-header');
+  if (!header) return;
+
+  const firstColumnSet = root.querySelector('column-set');
+  if (firstColumnSet) {
+    for (const unit of Array.from(firstColumnSet.querySelectorAll('column-unit[slot="0"], column-unit[slot="1"]'))) {
+      unit.remove();
+    }
+    const titleUnit = firstColumnSet.querySelector('column-unit[slot="2"]');
+    if (titleUnit) {
+      titleUnit.setAttribute('span', '12');
+    }
+  }
+
+  header.classList.add('hero-typewriter');
+  header.classList.remove('typewriter-headline', 'is-typed');
+
+  const textHost = header.querySelector('i') || header;
+  const introNode = document.createElement('span');
+  introNode.className = 'hero-typewriter-intro';
+  introNode.textContent = HERO_INTRO_LINE;
+  const rotatingLineNode = document.createElement('span');
+  rotatingLineNode.className = 'hero-typewriter-rotating';
+  const prefixNode = document.createElement('span');
+  prefixNode.className = 'hero-typewriter-prefix';
+  prefixNode.textContent = HERO_ROTATING_PREFIX;
+  const textNode = document.createElement('span');
+  textNode.className = 'hero-typewriter-text';
+
+  textHost.textContent = '';
+  rotatingLineNode.append(prefixNode, textNode);
+  textHost.append(introNode, rotatingLineNode);
+
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReducedMotion) {
+    textNode.textContent = `${HERO_LEAD_SPACE}${HERO_TYPEWRITER_LINES[0]}`;
+  } else {
+    let lineIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let timerId = 0;
+
+    const typingSpeed = 76;
+    const deletingSpeed = 34;
+    const pauseAfterTyping = 1150;
+    const pauseBeforeNext = 340;
+    const deleteStep = 2;
+
+    const render = () => {
+      const phrase = HERO_TYPEWRITER_LINES[lineIndex];
+      const currentText = phrase.slice(0, charIndex);
+      textNode.textContent = currentText ? `${HERO_LEAD_SPACE}${currentText}` : HERO_LEAD_SPACE;
+    };
+
+    const tick = () => {
+      const phrase = HERO_TYPEWRITER_LINES[lineIndex];
+
+      if (!isDeleting) {
+        if (charIndex < phrase.length) {
+          charIndex += 1;
+          render();
+          timerId = window.setTimeout(tick, typingSpeed);
+          return;
+        }
+        isDeleting = true;
+        timerId = window.setTimeout(tick, pauseAfterTyping);
+        return;
+      }
+
+      if (charIndex > 0) {
+        charIndex = Math.max(0, charIndex - deleteStep);
+        render();
+        timerId = window.setTimeout(tick, deletingSpeed);
+        return;
+      }
+
+      isDeleting = false;
+      lineIndex = (lineIndex + 1) % HERO_TYPEWRITER_LINES.length;
+      timerId = window.setTimeout(tick, pauseBeforeNext);
+    };
+
+    render();
+    timerId = window.setTimeout(tick, 360);
+    cleanups.push(() => {
+      window.clearTimeout(timerId);
+    });
+  }
+}
+
+export default function CargoContent({ html, projectNumber = null, pagePurl = '' }) {
   const navigate = useNavigate();
   const contentRef = useRef(null);
 
@@ -21,9 +456,10 @@ export default function CargoContent({ html, projectNumber = null }) {
         homepageSlug: manifest.homepageSlug,
         pageSlugToSetSlug: manifest.pageSlugToSetSlug,
         siteOrigin: state?.site?.direct_link || 'https://xuechuntao.com',
+        pagePurl,
         projectNumber
       }),
-    [html, projectNumber]
+    [html, pagePurl, projectNumber]
   );
 
   const onClick = useCallback(
@@ -47,6 +483,11 @@ export default function CargoContent({ html, projectNumber = null }) {
       }
 
       const href = anchor.getAttribute('href');
+      if (anchor.dataset.disabledLink === 'true') {
+        event.preventDefault();
+        return;
+      }
+
       if (!href || !href.startsWith('/')) {
         return;
       }
@@ -62,25 +503,29 @@ export default function CargoContent({ html, projectNumber = null }) {
     if (!root) return undefined;
 
     const cleanups = [];
-    const sectionHeaders = Array.from(root.querySelectorAll('.section-header'));
 
-    for (const header of sectionHeaders) {
-      const text = (header.textContent || '').replace(/\s+/g, ' ').trim();
-      const chars = Math.max(text.length, 8);
-      header.classList.add('typewriter-headline');
-      header.style.setProperty('--typing-chars', String(chars));
-      header.classList.remove('is-typed');
-
-      requestAnimationFrame(() => {
-        header.classList.add('is-typed');
-      });
+    if (pagePurl === HERO_PURL) {
+      mountHeroTypewriter(root, cleanups);
     }
+
+    if (pagePurl === BIO_PURL) {
+      mountBioKaleidoscope(root, cleanups);
+    }
+
+    mountImageLightbox(root, cleanups);
 
     const slideshows = Array.from(root.querySelectorAll('.cargo-gallery-slideshow'));
 
     for (const slideshow of slideshows) {
       const slides = Array.from(slideshow.querySelectorAll(':scope > .cargo-media-item'));
-      if (slides.length <= 1) continue;
+      if (slides.length <= 1) {
+        slides.forEach((slide) => {
+          slide.classList.add('is-active');
+        });
+        continue;
+      }
+
+      slideshow.classList.add('is-enhanced');
 
       for (const oldControl of Array.from(slideshow.querySelectorAll(':scope > .cargo-slideshow-control'))) {
         oldControl.remove();
@@ -132,7 +577,7 @@ export default function CargoContent({ html, projectNumber = null }) {
     return () => {
       cleanups.forEach((cleanup) => cleanup());
     };
-  }, [transformed]);
+  }, [pagePurl, transformed]);
 
   return (
     <bodycopy

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import CargoContent from './CargoContent';
-import { localAssetByRemoteUrl, manifest, state } from '../lib/cargoData';
+import { localAssetByRemoteUrl, manifest, state, toRoutePath } from '../lib/cargoData';
 
 const CV_REMOTE_URL = 'https://freight.cargo.site/m/A2430674546610214647077682951679/CV-2025.pdf';
 const LANDING_PAGE_ORDER = [
@@ -57,15 +58,6 @@ function isVisibleOnViewport(page, isMobile) {
   return true;
 }
 
-function localizeCssUrls(cssText) {
-  if (!cssText) return '';
-  let localized = cssText;
-  for (const [remoteUrl, localUrl] of Object.entries(localAssetByRemoteUrl)) {
-    localized = localized.split(remoteUrl).join(localUrl);
-  }
-  return localized;
-}
-
 function isTopNavPage(page) {
   const title = String(page?.title || '').toLowerCase();
   const purl = String(page?.purl || '').toLowerCase();
@@ -96,15 +88,24 @@ function SiteHeader({ cvHref }) {
   return (
     <header className="site-header">
       <nav className="site-header-nav">
-        <a className="site-header-link" href={`/${encodeURI(manifest.homepageSlug)}`}>
-          Home
-        </a>
-        <a className="site-header-link" href="/information-1">
-          Bio
-        </a>
-        <a className="site-header-link" href={cvHref} target="_blank" rel="noreferrer">
-          CV
-        </a>
+        <Link className="site-header-link site-header-link-home" to={toRoutePath(manifest.homepageSlug)}>
+          <span className="site-header-home-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" focusable="false">
+              <path d="M3.25 9.1 10 3.2l6.75 5.9" />
+              <path d="M5.2 8.5V16h9.6V8.5" />
+            </svg>
+          </span>
+          <span>Home</span>
+        </Link>
+
+        <div className="site-header-right">
+          <Link className="site-header-link site-header-link-right" to={toRoutePath('information-1')}>
+            Bio
+          </Link>
+          <a className="site-header-link site-header-link-right" href={cvHref} target="_blank" rel="noreferrer">
+            CV
+          </a>
+        </div>
       </nav>
     </header>
   );
@@ -119,18 +120,16 @@ function CargoPageBlock({ page, projectNumber }) {
   ]
     .filter(Boolean)
     .join(' ');
-  const localCss = useMemo(() => localizeCssUrls(page.local_css || ''), [page.local_css]);
 
   return (
     <section id={page.id} page-url={page.purl || ''} className={pageClassName} data-purl={page.purl || ''}>
-      {localCss ? <style>{localCss}</style> : null}
       <div className="backdrop clip">
         <div className="backdrop-contents visible inside loaded" />
       </div>
       {page.purl ? <a id={page.purl} /> : null}
       <div className="page-layout">
         <div className="page-content">
-          <CargoContent html={page.content || ''} projectNumber={projectNumber} />
+          <CargoContent html={page.content || ''} projectNumber={projectNumber} pagePurl={page.purl || ''} />
         </div>
       </div>
     </section>
@@ -145,6 +144,13 @@ export default function CargoPageRenderer({ setSlug }) {
 
   const isMobile = useIsMobile();
 
+  const footerPage = useMemo(
+    () =>
+      Object.values(state?.pages?.byId || {}).find((entry) => String(entry?.purl || '') === 'footer') ||
+      null,
+    []
+  );
+
   const pages = useMemo(() => {
     if (!route) return [];
     return route.pageIds
@@ -157,10 +163,13 @@ export default function CargoPageRenderer({ setSlug }) {
   const contentPages = useMemo(() => {
     const entries = pages.filter((page) => !page.pin);
     if (!route || route.slug !== manifest.homepageSlug) {
+      if (route?.slug === 'information-1' && footerPage && !entries.some((page) => page.id === footerPage.id)) {
+        return [...entries, footerPage];
+      }
       return entries;
     }
     return reorderLandingPages(entries);
-  }, [pages, route]);
+  }, [footerPage, pages, route]);
   const projectNumbersByPageId = useMemo(() => {
     if (!route || route.slug !== manifest.homepageSlug) {
       return {};
@@ -176,7 +185,6 @@ export default function CargoPageRenderer({ setSlug }) {
     return map;
   }, [route, contentPages]);
 
-  const siteStyles = useMemo(() => localizeCssUrls(state?.css?.stylesheet || ''), []);
   const cvHref = localAssetByRemoteUrl[CV_REMOTE_URL] || CV_REMOTE_URL;
 
   useEffect(() => {
@@ -204,8 +212,6 @@ export default function CargoPageRenderer({ setSlug }) {
 
   return (
     <main className="site-shell">
-      {siteStyles ? <style>{siteStyles}</style> : null}
-
       <div className="content site-route" data-set-id={route.setId} data-slug={route.slug}>
         <SiteHeader cvHref={cvHref} />
 

@@ -1,20 +1,26 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import CargoPageRenderer from './components/CargoPageRenderer';
-import { manifest, toRoutePath } from './lib/cargoData';
+import { manifest, toRoutePath, toSetSlugFromRouteSlug } from './lib/cargoData';
 import './styles/cargo-fonts.css';
 import './styles/base.css';
-import './styles/cargo-compat.css';
 
 function SlugRoute() {
   const params = useParams();
   const rawSlug = params.slug || '';
   const slug = decodeURIComponent(rawSlug);
+  const setSlug = toSetSlugFromRouteSlug(slug);
+  const canonicalPath = toRoutePath(setSlug);
+  const currentPath = `/${encodeURI(slug)}`;
 
-  if (manifest.routeSlugs.includes(slug)) {
-    return <CargoPageRenderer setSlug={slug} />;
+  if (canonicalPath !== currentPath && manifest.routeSlugs.includes(setSlug)) {
+    return <Navigate replace to={canonicalPath} />;
   }
 
-  const mappedSet = manifest.pageSlugToSetSlug?.[slug];
+  if (manifest.routeSlugs.includes(setSlug)) {
+    return <CargoPageRenderer setSlug={setSlug} />;
+  }
+
+  const mappedSet = manifest.pageSlugToSetSlug?.[setSlug] || manifest.pageSlugToSetSlug?.[slug];
   if (mappedSet) {
     return <Navigate replace to={toRoutePath(mappedSet)} />;
   }

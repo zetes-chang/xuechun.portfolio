@@ -2,6 +2,15 @@ import state from '../../data/cargo-state.json';
 import manifest from '../../data/routes.manifest.json';
 import assetsManifest from '../../data/assets.manifest.json';
 
+const ROUTE_ALIAS_BY_SET_SLUG = {
+  [manifest.homepageSlug]: 'home',
+  'information-1': 'bio'
+};
+
+const SET_SLUG_BY_ROUTE_ALIAS = Object.fromEntries(
+  Object.entries(ROUTE_ALIAS_BY_SET_SLUG).map(([setSlug, alias]) => [alias, setSlug])
+);
+
 const toPublicPath = (localPath) =>
   `/${localPath.replace(/^public[\\/]/, '').replace(/\\/g, '/')}`;
 
@@ -27,6 +36,14 @@ for (const asset of assetsManifest?.assets || []) {
 
 export { state, manifest, localAssetByRemoteUrl, localAssetByHash };
 
+export function toCanonicalRouteSlug(setSlug) {
+  return ROUTE_ALIAS_BY_SET_SLUG[setSlug] || setSlug;
+}
+
+export function toSetSlugFromRouteSlug(routeSlug) {
+  return SET_SLUG_BY_ROUTE_ALIAS[routeSlug] || routeSlug;
+}
+
 export function toRoutePath(slug) {
-  return `/${encodeURI(slug)}`;
+  return `/${encodeURI(toCanonicalRouteSlug(slug))}`;
 }

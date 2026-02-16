@@ -45,9 +45,15 @@ function decorateElement(element, className) {
   }
 }
 
+function toCanonicalRouteSlug(setSlug, homepageSlug) {
+  if (setSlug === homepageSlug) return 'home';
+  if (setSlug === 'information-1') return 'bio';
+  return setSlug;
+}
+
 function normalizeInternalHref(href, { homepageSlug, pageSlugToSetSlug, siteOrigin }) {
   if (!href || href === '#') {
-    return `/${encodeURI(homepageSlug)}`;
+    return `/${encodeURI(toCanonicalRouteSlug(homepageSlug, homepageSlug))}`;
   }
 
   if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#')) {
@@ -74,11 +80,11 @@ function normalizeInternalHref(href, { homepageSlug, pageSlugToSetSlug, siteOrig
   const slug = decodeURIComponent(pathOnly.replace(/^\/+/, ''));
 
   if (!slug) {
-    return `/${encodeURI(homepageSlug)}`;
+    return `/${encodeURI(toCanonicalRouteSlug(homepageSlug, homepageSlug))}`;
   }
 
   const mapped = pageSlugToSetSlug?.[slug] || slug;
-  const basePath = `/${encodeURI(mapped)}`;
+  const basePath = `/${encodeURI(toCanonicalRouteSlug(mapped, homepageSlug))}`;
 
   return query ? `${basePath}?${query}` : basePath;
 }
@@ -126,11 +132,337 @@ function rewriteProjectNumber(wrapper, projectNumber) {
   const firstTextNode = textNodeWalker.nextNode();
   if (!firstTextNode) return;
 
+  for (const anchor of Array.from(firstColumn.querySelectorAll('a'))) {
+    const anchorText = (anchor.textContent || '').replace(/\s+/g, '');
+    if (!/^\d+$/u.test(anchorText)) continue;
+
+    const relation = anchor.compareDocumentPosition(firstTextNode);
+    const isBeforeFirstText = Boolean(relation & Node.DOCUMENT_POSITION_FOLLOWING);
+    if (!isBeforeFirstText) continue;
+
+    const next = anchor.nextSibling;
+    if (next?.nodeType === Node.TEXT_NODE) {
+      next.nodeValue = (next.nodeValue || '').replace(/^[\s\u00A0]+/u, ' ');
+    }
+    anchor.remove();
+  }
+
   const currentText = firstTextNode.nodeValue || '';
-  const cleaned = currentText.replace(/^\s*\d+\s*/u, '').trim();
+  const cleaned = currentText.replace(/^\s*(?:\d+\s*)+/u, '').trim();
   if (!cleaned) return;
 
   firstTextNode.nodeValue = ` ${paddedNumber} ${cleaned}`;
+}
+
+function normalizeProjectSpacing(wrapper, pagePurl) {
+  if (!pagePurl || pagePurl.startsWith('header-') || pagePurl === 'footer') {
+    return;
+  }
+
+  const hasMeaningfulText = (set) => {
+    const probe = set.cloneNode(true);
+    probe
+      .querySelectorAll('template, style, script, slot, br, [data-nosnippet], [aria-hidden="true"]')
+      .forEach((node) => node.remove());
+    const text = (probe.textContent || '').replace(/[\s\u00A0]+/g, '');
+    return text.length > 0;
+  };
+
+  for (const set of Array.from(wrapper.querySelectorAll('column-set'))) {
+    const hasVisualContent = Boolean(
+      set.querySelector(
+        'media-item, gallery-slideshow, gallery-grid, gallery-justify, gallery-columnized, img, video, iframe, a, button, canvas, svg'
+      )
+    );
+    if (!hasVisualContent && !hasMeaningfulText(set)) {
+      set.remove();
+    }
+  }
+}
+
+function enhanceBioKaleidoscope(wrapper, pagePurl) {
+  if (pagePurl !== 'information') {
+    return;
+  }
+
+  for (const floating of Array.from(wrapper.querySelectorAll('.flying-object, [uses="flying-object"]'))) {
+    floating.remove();
+  }
+
+  const mediaItems = Array.from(wrapper.querySelectorAll('media-item')).slice(0, 2).map((item) => item.cloneNode(true));
+
+  const layout = document.createElement('div');
+  layout.className = 'bio-page-layout';
+
+  const leftPane = document.createElement('div');
+  leftPane.className = 'bio-kaleidoscope-pane';
+
+  const square = document.createElement('div');
+  square.className = 'bio-kaleidoscope-square';
+
+  const canvas = document.createElement('canvas');
+  canvas.className = 'bio-kaleidoscope-canvas';
+  canvas.setAttribute('aria-hidden', 'true');
+  square.appendChild(canvas);
+  leftPane.appendChild(square);
+
+  const rightPane = document.createElement('div');
+  rightPane.className = 'bio-profile-pane';
+
+  const intro = document.createElement('div');
+  intro.className = 'bio-intro';
+
+  const introLead = document.createElement('h2');
+  introLead.className = 'bio-intro-line';
+  introLead.textContent = 'Hello,';
+
+  const introName = document.createElement('h2');
+  introName.className = 'bio-intro-line';
+  introName.textContent = 'my name is Sophia.';
+
+  intro.append(introLead, introName);
+
+  const photoGrid = document.createElement('div');
+  photoGrid.className = 'bio-photo-grid';
+
+  for (const mediaItem of mediaItems) {
+    const card = document.createElement('div');
+    card.className = 'bio-photo-card';
+    card.appendChild(mediaItem);
+    photoGrid.appendChild(card);
+  }
+
+  const summary = document.createElement('p');
+  summary.className = 'bio-summary';
+  summary.textContent =
+    'I am a UX designer focused on enterprise and fintech products. I translate complex requirements into clear, scalable experiences through user research, systems thinking, and close collaboration with product and engineering teams.';
+
+  rightPane.append(intro, photoGrid, summary);
+  layout.append(leftPane, rightPane);
+
+  wrapper.textContent = '';
+  wrapper.appendChild(layout);
+}
+
+function injectAiComplianceShowcase(wrapper, pagePurl) {
+  if (pagePurl !== '01-markets-pipeline-dashboard-copy') {
+    return;
+  }
+
+  const targetSet = Array.from(wrapper.querySelectorAll('column-set')).find(
+    (set) =>
+      set.querySelector('gallery-slideshow') &&
+      /check this project/i.test((set.textContent || '').replace(/\s+/g, ' '))
+  );
+  if (!targetSet) return;
+
+  targetSet.classList.add('ai-compliance-layout');
+  const mediaUnit = targetSet.querySelector('column-unit[slot="0"]');
+  const textUnit = targetSet.querySelector('column-unit[slot="1"]');
+  if (textUnit) {
+    textUnit.classList.add('ai-compliance-description');
+  }
+  if (!mediaUnit) return;
+
+  const showcase = document.createElement('div');
+  showcase.className = 'ai-compliance-showcase';
+
+  const imageSources = [
+    {
+      src: '/assets/cargo/freight.cargo.site/t/original/i/O2701928164361042364328751543807/Group-4190.png',
+      variant: 'left'
+    },
+    {
+      src: '/assets/cargo/freight.cargo.site/t/original/i/O2701928164361042364328751543807/Group-4190.png',
+      variant: 'right'
+    }
+  ];
+
+  for (const source of imageSources) {
+    const figure = document.createElement('figure');
+    figure.className = `ai-compliance-showcase-item is-${source.variant}`;
+
+    const img = document.createElement('img');
+    img.src = source.src;
+    img.alt = 'AI Cross-border Compliance Solutions';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+
+    figure.appendChild(img);
+    showcase.appendChild(figure);
+  }
+
+  mediaUnit.textContent = '';
+  mediaUnit.appendChild(showcase);
+}
+
+function setColumnUnitText(unit, value, className = '') {
+  if (!unit || !value) return;
+  unit.textContent = '';
+  const text = document.createElement('span');
+  text.className = ['landing-project-header-cell', className].filter(Boolean).join(' ');
+  text.style.setProperty('--font-scale', '1.1');
+  text.textContent = value;
+  unit.appendChild(text);
+}
+
+function enforceLandingProjectHeader(wrapper, pagePurl) {
+  const overrides = {
+    '06-plaza-lively-floor-game': {
+      title: '07 Plaza Lively Floor Game',
+      client: 'NOWHERE / Seed Plaza',
+      year: '2021',
+      spans: { title: '5', client: '3', year: '4' }
+    },
+    '05-nike-basketball-interactive-experience': {
+      title: '08 Nike Basketball Interactive Experience',
+      client: 'NOWHERE / Nike',
+      year: '2021',
+      spans: { title: '5', client: '3', year: '4' }
+    },
+    '07-tie-dyed-rivival': {
+      title: '09 Tie Dyed Rivival',
+      client: 'Chinese Bai Minority Community',
+      year: '2024',
+      spans: { title: '5', client: '3', year: '4' }
+    },
+    '09-citi-tech-engineer-annual-report-1': {
+      title: '11 Citi Tech Engineer Annual Report',
+      client: 'Citi Tech',
+      year: '2023',
+      spans: { title: '5', client: '3', year: '4' }
+    }
+  };
+
+  const override = overrides[pagePurl];
+  if (!override) return;
+
+  const firstSet = wrapper.querySelector('column-set');
+  if (!firstSet) return;
+
+  const titleUnit =
+    firstSet.querySelector('column-unit[slot="0"]') || firstSet.querySelector('column-unit:first-of-type');
+  const clientUnit = firstSet.querySelector('column-unit[slot="1"]');
+  const yearUnit = firstSet.querySelector('column-unit[slot="2"]');
+
+  firstSet.classList.add('landing-project-header-row');
+  if (titleUnit) titleUnit.classList.add('landing-project-header-title');
+  if (clientUnit) clientUnit.classList.add('landing-project-header-client');
+  if (yearUnit) yearUnit.classList.add('landing-project-header-year');
+
+  if (override.spans) {
+    if (titleUnit && override.spans.title) titleUnit.setAttribute('span', override.spans.title);
+    if (clientUnit && override.spans.client) clientUnit.setAttribute('span', override.spans.client);
+    if (yearUnit && override.spans.year) yearUnit.setAttribute('span', override.spans.year);
+  }
+
+  setColumnUnitText(titleUnit, override.title, 'is-title');
+  setColumnUnitText(clientUnit, override.client, 'is-client');
+  setColumnUnitText(yearUnit, override.year, 'is-year');
+}
+
+function enhanceFooterLayout(wrapper, pagePurl) {
+  if (pagePurl !== 'footer') {
+    return;
+  }
+
+  const email = 'thisisxuechun@gmail.com';
+  const linkedinUrl = 'https://www.linkedin.com/in/xuechun-sophia-tao';
+  const currentYear = String(new Date().getFullYear());
+
+  const footer = document.createElement('div');
+  footer.className = 'custom-footer';
+
+  const top = document.createElement('div');
+  top.className = 'custom-footer-top';
+
+  const left = document.createElement('div');
+  left.className = 'custom-footer-left';
+
+  const kicker = document.createElement('p');
+  kicker.className = 'custom-footer-kicker';
+  kicker.textContent = 'Got an idea?';
+
+  const emailLink = document.createElement('a');
+  emailLink.className = 'custom-footer-email';
+  emailLink.href = `mailto:${email}`;
+  emailLink.textContent = email;
+
+  left.append(kicker, emailLink);
+
+  const right = document.createElement('div');
+  right.className = 'custom-footer-right';
+
+  const linkedin = document.createElement('a');
+  linkedin.className = 'custom-footer-linkedin';
+  linkedin.href = linkedinUrl;
+  linkedin.target = '_blank';
+  linkedin.rel = 'noopener noreferrer';
+  linkedin.textContent = 'LinkedIn ↗';
+  right.appendChild(linkedin);
+
+  top.append(left, right);
+
+  const bottom = document.createElement('div');
+  bottom.className = 'custom-footer-bottom';
+
+  const copy = document.createElement('p');
+  copy.className = 'custom-footer-copy';
+  copy.textContent = `© ${currentYear} Xuechun Sophia Tao. All Rights Reserved.`;
+
+  bottom.append(copy);
+
+  footer.append(top, bottom);
+
+  wrapper.textContent = '';
+  wrapper.appendChild(footer);
+}
+
+function normalizeSectionHeaderLayout(wrapper, pagePurl) {
+  if (!pagePurl || !pagePurl.startsWith('header-') || pagePurl === 'header-sales-experience-in-fintech') {
+    return;
+  }
+
+  const firstSet = wrapper.querySelector('column-set');
+  if (!firstSet) return;
+
+  const units = Array.from(firstSet.querySelectorAll('column-unit'));
+  if (units.length === 0) return;
+
+  const headerUnit = units.find((unit) => unit.querySelector('.section-header'));
+  if (!headerUnit) return;
+
+  for (const unit of units) {
+    if (unit !== headerUnit) {
+      unit.remove();
+    }
+  }
+
+  firstSet.querySelectorAll('h1').forEach((node) => node.remove());
+  headerUnit.setAttribute('span', '12');
+
+  const header = headerUnit.querySelector('.section-header');
+  if (!header) return;
+
+  const stylized = header.querySelector('i');
+  const enforcedTextByPurl = {
+    'header-digital-arts-in-branding': 'Digital Arts in Branding'
+  };
+  const enforcedText = enforcedTextByPurl[pagePurl];
+  if (enforcedText) {
+    if (stylized) {
+      stylized.textContent = enforcedText;
+    } else {
+      header.textContent = enforcedText;
+    }
+    return;
+  }
+
+  if (stylized) {
+    stylized.textContent = stylized.textContent.replace(/^[\s\u00A0]+/u, '');
+  } else {
+    header.textContent = (header.textContent || '').replace(/^[\s\u00A0]+/u, '');
+  }
 }
 
 export function transformCargoHtml({
@@ -141,6 +473,7 @@ export function transformCargoHtml({
   homepageSlug,
   pageSlugToSetSlug,
   siteOrigin,
+  pagePurl,
   projectNumber
 }) {
   if (!html) {
@@ -150,11 +483,17 @@ export function transformCargoHtml({
   const wrapper = document.createElement('div');
   wrapper.innerHTML = html;
 
-  rewriteProjectNumber(wrapper, projectNumber);
-
   for (const template of Array.from(wrapper.querySelectorAll('template'))) {
     template.remove();
   }
+
+  rewriteProjectNumber(wrapper, projectNumber);
+  enforceLandingProjectHeader(wrapper, pagePurl);
+  enhanceFooterLayout(wrapper, pagePurl);
+  enhanceBioKaleidoscope(wrapper, pagePurl);
+  injectAiComplianceShowcase(wrapper, pagePurl);
+  normalizeSectionHeaderLayout(wrapper, pagePurl);
+  normalizeProjectSpacing(wrapper, pagePurl);
 
   for (const node of Array.from(wrapper.querySelectorAll('[src]'))) {
     const source = node.getAttribute('src');
@@ -242,13 +581,21 @@ export function transformCargoHtml({
       continue;
     }
 
+    if (/check\s*this\s*project/i.test(linkText)) {
+      link.setAttribute('href', '#');
+      link.setAttribute('aria-disabled', 'true');
+      link.setAttribute('data-disabled-link', 'true');
+      link.classList.add('disabled-project-link');
+      continue;
+    }
+
     if (localAssetByRemoteUrl?.[href]) {
       link.setAttribute('href', localAssetByRemoteUrl[href]);
       continue;
     }
 
     if (rel === 'home-page') {
-      link.setAttribute('href', `/${encodeURI(homepageSlug)}`);
+      link.setAttribute('href', `/${encodeURI(toCanonicalRouteSlug(homepageSlug, homepageSlug))}`);
       continue;
     }
 
