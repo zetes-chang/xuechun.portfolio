@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import CargoPageRenderer from './components/CargoPageRenderer';
+import ProjectDetailPage from './components/ProjectDetailPage';
 import { manifest, toRoutePath, toSetSlugFromRouteSlug } from './lib/cargoData';
 import './styles/cargo-fonts.css';
 import './styles/base.css';
@@ -32,6 +33,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate replace to={toRoutePath(manifest.homepageSlug)} />} />
+      <Route path="/projects/compliance" element={<ProjectDetailPage kind="compliance" />} />
+      <Route path="/projects/pipeline" element={<ProjectDetailPage kind="pipeline" />} />
       <Route path="/:slug" element={<SlugRoute />} />
       <Route path="*" element={<Navigate replace to={toRoutePath(manifest.homepageSlug)} />} />
     </Routes>

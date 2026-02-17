@@ -296,6 +296,26 @@ function injectAiComplianceShowcase(wrapper, pagePurl) {
   mediaUnit.appendChild(showcase);
 }
 
+function linkProjectDetailButtons(wrapper, pagePurl) {
+  // Keep buttons but route them to our local project detail pages.
+  const projectDestinations = {
+    '01-markets-pipeline-dashboard-copy': '/projects/compliance',
+    '01-markets-pipeline-dashboard-copy-copy': '/projects/pipeline'
+  };
+
+  const destination = projectDestinations[pagePurl];
+  if (!destination) return;
+
+  for (const link of Array.from(wrapper.querySelectorAll('a'))) {
+    const text = (link.textContent || '').replace(/\s+/g, ' ').trim();
+    if (!/check\s*this\s*project/i.test(text)) continue;
+    link.setAttribute('href', destination);
+    link.removeAttribute('aria-disabled');
+    link.removeAttribute('data-disabled-link');
+    link.classList.remove('disabled-project-link');
+  }
+}
+
 function setColumnUnitText(unit, value, className = '') {
   if (!unit || !value) return;
   unit.textContent = '';
@@ -492,6 +512,7 @@ export function transformCargoHtml({
   enhanceFooterLayout(wrapper, pagePurl);
   enhanceBioKaleidoscope(wrapper, pagePurl);
   injectAiComplianceShowcase(wrapper, pagePurl);
+  linkProjectDetailButtons(wrapper, pagePurl);
   normalizeSectionHeaderLayout(wrapper, pagePurl);
   normalizeProjectSpacing(wrapper, pagePurl);
 
@@ -531,7 +552,11 @@ export function transformCargoHtml({
       const srcset = widths
         .filter((width) => width <= sourceWidth)
         .map((width) => `${buildFreightUrlForWidth(media, width, quality)} ${width}w`);
-      if (!localUrl && srcset.length > 0 && src) {
+
+      // Never generate remote `freight.cargo.site` srcsets when we're serving local assets.
+      // This keeps the site independent from Cargo's image CDN.
+      const isRemoteFreight = typeof src === 'string' && src.startsWith('https://freight.cargo.site/');
+      if (isRemoteFreight && !localUrl && srcset.length > 0 && src) {
         image.srcset = srcset.join(', ');
         image.sizes = '(max-width: 900px) 100vw, 90vw';
       }

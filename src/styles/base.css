@@ -51,6 +51,83 @@ body {
   min-height: 100vh;
 }
 
+.project-detail-route {
+  padding-left: var(--project-inline-padding);
+  padding-right: var(--project-inline-padding);
+}
+
+.project-detail-topbar {
+  padding-top: 1.25rem;
+  padding-bottom: 0.75rem;
+}
+
+.project-detail-back {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.86);
+  text-decoration: none;
+  font-weight: 520;
+  font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+}
+
+.project-detail-back:hover {
+  opacity: 0.8;
+}
+
+.project-detail-hero {
+  padding-top: clamp(0.75rem, 1.6vw, 1.25rem);
+  padding-bottom: clamp(1.1rem, 2.6vw, 2rem);
+  border-bottom: 1px solid rgba(18, 24, 36, 0.12);
+}
+
+.project-detail-title {
+  margin: 0;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: clamp(1.85rem, 2.8vw, 2.6rem);
+  line-height: 1.08;
+}
+
+.project-detail-subtitle {
+  margin: 0.55rem 0 0;
+  color: rgba(0, 0, 0, 0.62);
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.35;
+}
+
+.project-detail-grid {
+  padding-top: clamp(1.25rem, 2.8vw, 2.2rem);
+  padding-bottom: clamp(2.2rem, 5vw, 3.4rem);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.1rem, 2.4vw, 1.9rem);
+}
+
+.project-detail-figure {
+  margin: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(18, 24, 36, 0.08);
+  box-shadow: 0 10px 25px rgba(18, 24, 36, 0.08);
+}
+
+.project-detail-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (min-width: 980px) {
+  .project-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .project-detail-figure {
+    border-radius: 22px;
+  }
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -489,7 +566,8 @@ section.page[data-purl='information'] .bio-kaleidoscope-canvas {
   display: block;
   width: 100%;
   height: 100%;
-  background-image: url('/assets/local/bio-kaleidoscope-source.jpg');
+  /* Keep a static backdrop while the canvas JS loads. */
+  background-image: url('/assets/local/bio-kaleidoscope-flower.jpg');
   background-size: cover;
   background-position: center;
 }

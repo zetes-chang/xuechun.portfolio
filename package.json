@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run prepare:data && vite",
+    "dev": "vite",
     "build": "vite build",
     "build:fresh": "npm run prepare:data && vite build",
     "preview": "vite preview",

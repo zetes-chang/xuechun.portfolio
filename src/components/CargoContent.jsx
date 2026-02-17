@@ -186,7 +186,7 @@ function lerpAngle(a, b, t) {
 function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, phase) {
   const centerX = width / 2;
   const centerY = height / 2;
-  const coverScale = Math.max(width / image.width, height / image.height) * 1.62;
+  const coverScale = Math.max(width / image.width, height / image.height) * 1.78;
   const drawWidth = image.width * coverScale;
   const drawHeight = image.height * coverScale;
   const dx = pointerX - 0.5;
@@ -195,17 +195,19 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, ph
   const pointerRadius = Math.min(1, Math.hypot(dx, dy) / 0.7071);
   const panRangeX = Math.max(0, (drawWidth - width) * 0.5);
   const panRangeY = Math.max(0, (drawHeight - height) * 0.5);
-  const radialPanStrength = pointerRadius * 0.58;
+  const radialPanStrength = pointerRadius * 0.38;
   const panX = Math.cos(pointerAngle) * panRangeX * radialPanStrength;
   const panY = Math.sin(pointerAngle) * panRangeY * radialPanStrength;
-  const baseRotation = phase + pointerAngle * 0.12;
-  const twist = (pointerRadius - 0.2) * 0.12;
-  const slices = 20;
+  const baseRotation = phase * 1.25 + pointerAngle * 0.08;
+  const twist = (pointerRadius - 0.2) * 0.1;
+  const slices = 24;
   const sliceAngle = (Math.PI * 2) / slices;
   const radius = Math.hypot(width, height) * 0.92;
-  const arcPad = sliceAngle * 0.02;
+  const arcPad = sliceAngle * 0.06;
 
-  ctx.clearRect(0, 0, width, height);
+  // Avoid `clearRect()` with an opaque canvas: it can leave black pixels behind on some GPUs.
+  ctx.fillStyle = '#0c1020';
+  ctx.fillRect(0, 0, width, height);
 
   // Base full-bleed draw prevents edge gaps when slices rotate.
   ctx.save();
@@ -221,7 +223,11 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, ph
     const spokeDrift = Math.cos(pointerAngle - mid) * pointerRadius * Math.min(width, height) * 0.075;
     const sourceOffsetX = panX + Math.cos(mid) * spokeDrift;
     const sourceOffsetY = panY + Math.sin(mid) * spokeDrift;
-    const sliceTwist = (index % 2 === 0 ? 1 : -1) * twist * 0.55;
+    // Slight per-slice wobble breaks up the "flat" rotation and reads more radial.
+    const wobble =
+      Math.sin(phase * 0.92 + index * 0.73) * 0.11 +
+      Math.cos(phase * 0.61 + index * 0.31) * 0.07;
+    const sliceTwist = (index % 2 === 0 ? 1 : -1) * twist * 0.35 + wobble * pointerRadius * 0.14;
 
     ctx.save();
     ctx.translate(centerX, centerY);
@@ -331,7 +337,7 @@ function mountBioKaleidoscope(root, cleanups) {
     currentAngle = lerpAngle(currentAngle, targetAngle, 0.12);
     currentRadius = lerp(currentRadius, targetRadius, 0.12);
 
-    const speed = (hovering ? 1.25 : 0.65) + currentRadius * 0.95;
+    const speed = (hovering ? 2.25 : 1.15) + currentRadius * 1.35;
     phase += dt * speed;
     if (phase > Math.PI * 2) phase -= Math.PI * 2;
 

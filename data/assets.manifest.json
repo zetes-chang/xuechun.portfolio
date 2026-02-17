@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-16T14:07:03.271Z",
-  "total": 89,
+  "generatedAt": "2026-02-17T09:16:33.995Z",
+  "total": 83,
   "assets": [
     {
       "url": "https://freight.cargo.site/m/A2430674546610214647077682951679/CV-2025.pdf",
@@ -115,22 +115,6 @@
       ]
     },
     {
-      "url": "https://freight.cargo.site/t/original/i/G2423482929679467124011072632319/IMG_2901.JPG",
-      "downloadUrl": "https://freight.cargo.site/w/1200/q/75/i/G2423482929679467124011072632319/IMG_2901.JPG",
-      "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/G2423482929679467124011072632319/IMG_2901.JPG",
-      "sources": [
-        "derived-original"
-      ]
-    },
-    {
-      "url": "https://freight.cargo.site/t/original/i/H2423486293406355476800390706687/2025-06-26-21.43.53.png",
-      "downloadUrl": "https://freight.cargo.site/w/1600/q/75/i/H2423486293406355476800390706687/2025-06-26-21.43.53.png",
-      "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/H2423486293406355476800390706687/2025-06-26-21.43.53.png",
-      "sources": [
-        "derived-original"
-      ]
-    },
-    {
       "url": "https://freight.cargo.site/t/original/i/J2414147224460581550959809148415/lebron.GIF",
       "downloadUrl": "https://freight.cargo.site/w/720/q/65/i/J2414147224460581550959809148415/lebron.GIF",
       "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/J2414147224460581550959809148415/lebron.GIF",
@@ -171,22 +155,6 @@
       ]
     },
     {
-      "url": "https://freight.cargo.site/t/original/i/L2423481818318476915231716423167/2025-06-26-21.39.58.png",
-      "downloadUrl": "https://freight.cargo.site/w/1200/q/75/i/L2423481818318476915231716423167/2025-06-26-21.39.58.png",
-      "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/L2423481818318476915231716423167/2025-06-26-21.39.58.png",
-      "sources": [
-        "derived-original"
-      ]
-    },
-    {
-      "url": "https://freight.cargo.site/t/original/i/L2423495688572919890033252906495/2025-06-26-21.51.52.png",
-      "downloadUrl": "https://freight.cargo.site/w/1200/q/75/i/L2423495688572919890033252906495/2025-06-26-21.51.52.png",
-      "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/L2423495688572919890033252906495/2025-06-26-21.51.52.png",
-      "sources": [
-        "derived-original"
-      ]
-    },
-    {
       "url": "https://freight.cargo.site/t/original/i/M2265823430982709639689707861503/Rectangle-725.png",
       "downloadUrl": "https://freight.cargo.site/w/1200/q/75/i/M2265823430982709639689707861503/Rectangle-725.png",
       "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/M2265823430982709639689707861503/Rectangle-725.png",
@@ -220,7 +188,7 @@
     },
     {
       "url": "https://freight.cargo.site/t/original/i/O2423504420505247877112896304639/.png",
-      "downloadUrl": "https://freight.cargo.site/w/32/q/75/i/O2423504420505247877112896304639/.png",
+      "downloadUrl": "https://freight.cargo.site/w/1200/q/75/i/O2423504420505247877112896304639/.png",
       "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/O2423504420505247877112896304639/.png",
       "sources": [
         "derived-original"
@@ -356,14 +324,6 @@
       ]
     },
     {
-      "url": "https://freight.cargo.site/t/original/i/X855421444815825990992220990044/vertical.svg",
-      "downloadUrl": "https://freight.cargo.site/w/1600/q/75/i/X855421444815825990992220990044/vertical.svg",
-      "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/X855421444815825990992220990044/vertical.svg",
-      "sources": [
-        "derived-original"
-      ]
-    },
-    {
       "url": "https://freight.cargo.site/t/original/i/Y2416590985750900699165587027455/background.png",
       "downloadUrl": "https://freight.cargo.site/w/1600/q/75/i/Y2416590985750900699165587027455/background.png",
       "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/Y2416590985750900699165587027455/background.png",
@@ -407,14 +367,6 @@
       "url": "https://freight.cargo.site/t/original/i/Z2423473018981746082817371420159/IMG_2899.JPG",
       "downloadUrl": "https://freight.cargo.site/w/1200/q/75/i/Z2423473018981746082817371420159/IMG_2899.JPG",
       "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/Z2423473018981746082817371420159/IMG_2899.JPG",
-      "sources": [
-        "derived-original"
-      ]
-    },
-    {
-      "url": "https://freight.cargo.site/t/original/i/Z2423494222315020447155833157119/2025-06-26-21.51.05.png",
-      "downloadUrl": "https://freight.cargo.site/w/1600/q/75/i/Z2423494222315020447155833157119/2025-06-26-21.51.05.png",
-      "localPath": "public/assets/cargo/freight.cargo.site/t/original/i/Z2423494222315020447155833157119/2025-06-26-21.51.05.png",
       "sources": [
         "derived-original"
       ]
