@@ -1,5 +1,8 @@
-import { Link } from 'react-router-dom';
-import { toRoutePath } from '../lib/cargoData';
+import SiteHeader from './SiteHeader';
+import SiteFooter from './SiteFooter';
+import { localAssetByRemoteUrl } from '../lib/cargoData';
+
+const CV_REMOTE_URL = 'https://freight.cargo.site/m/A2430674546610214647077682951679/CV-2025.pdf';
 
 function ProjectHero({ title, subtitle }) {
   return (
@@ -25,6 +28,7 @@ export default function ProjectDetailPage({ kind }) {
   const title = isCompliance ? 'AI Cross-border Compliance Platform' : 'Finance Market Sales Pipeline Dashboard';
   const subtitle = isCompliance ? 'Selected Screens and UX Work' : 'Selected Screens and UX Work';
   const basePath = isCompliance ? '/assets/projects/compliance' : '/assets/projects/pipeline';
+  const cvHref = localAssetByRemoteUrl?.[CV_REMOTE_URL] || CV_REMOTE_URL;
   const images = isCompliance
     ? [
         { src: `${basePath}/01.png`, alt: title },
@@ -43,11 +47,7 @@ export default function ProjectDetailPage({ kind }) {
   return (
     <main className="site-shell">
       <div className="content site-route project-detail-route">
-        <div className="project-detail-topbar">
-          <Link className="project-detail-back" to={toRoutePath('home')}>
-            ← Back
-          </Link>
-        </div>
+        <SiteHeader cvHref={cvHref} />
 
         <ProjectHero title={title} subtitle={subtitle} />
 
@@ -56,8 +56,9 @@ export default function ProjectDetailPage({ kind }) {
             <ProjectImage key={img.src} src={img.src} alt={img.alt} />
           ))}
         </section>
+
+        <SiteFooter />
       </div>
     </main>
   );
 }
-

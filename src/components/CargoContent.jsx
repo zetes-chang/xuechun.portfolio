@@ -309,6 +309,7 @@ function mountBioKaleidoscope(root, cleanups) {
   let inView = true;
   let rafId = 0;
   let loaded = false;
+  let lastPointerEventTime = 0;
 
   const updateSize = () => {
     dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -337,7 +338,8 @@ function mountBioKaleidoscope(root, cleanups) {
     currentAngle = lerpAngle(currentAngle, targetAngle, 0.12);
     currentRadius = lerp(currentRadius, targetRadius, 0.12);
 
-    const speed = (hovering ? 2.25 : 1.15) + currentRadius * 1.35;
+    // Slow baseline motion; slightly faster on hover and towards the edges.
+    const speed = (hovering ? 0.42 : 0.18) + currentRadius * 0.22;
     phase += dt * speed;
     if (phase > Math.PI * 2) phase -= Math.PI * 2;
 
@@ -366,6 +368,7 @@ function mountBioKaleidoscope(root, cleanups) {
 
   const onPointerMove = (event) => {
     setPointerTarget(event.clientX, event.clientY);
+    lastPointerEventTime = performance.now();
   };
 
   const onPointerEnter = () => {
@@ -408,6 +411,7 @@ function mountBioKaleidoscope(root, cleanups) {
       inView = entries.some((entry) => entry.isIntersecting);
       if (inView) {
         lastTime = 0;
+        lastPointerEventTime = performance.now();
         scheduleRender();
       }
     },
@@ -415,12 +419,26 @@ function mountBioKaleidoscope(root, cleanups) {
   );
   observer.observe(canvas);
 
+  // Gentle ambient drift even without pointer movement.
+  const idle = window.setInterval(() => {
+    if (!loaded || !inView) return;
+    const now = performance.now();
+    if (now - lastPointerEventTime < 650) return;
+    const t = now / 1000;
+    targetX = 0.5 + Math.cos(t * 0.18) * 0.06;
+    targetY = 0.5 + Math.sin(t * 0.16) * 0.06;
+    targetAngle = Math.atan2(targetY - 0.5, targetX - 0.5);
+    targetRadius = clamp01(Math.hypot(targetX - 0.5, targetY - 0.5) / 0.7071);
+    scheduleRender();
+  }, 120);
+
   canvas.addEventListener('pointermove', onPointerMove, { passive: true });
   canvas.addEventListener('pointerenter', onPointerEnter);
   canvas.addEventListener('pointerleave', onPointerLeave);
   window.addEventListener('resize', onResize);
 
   cleanups.push(() => {
+    window.clearInterval(idle);
     canvas.removeEventListener('pointermove', onPointerMove);
     canvas.removeEventListener('pointerenter', onPointerEnter);
     canvas.removeEventListener('pointerleave', onPointerLeave);

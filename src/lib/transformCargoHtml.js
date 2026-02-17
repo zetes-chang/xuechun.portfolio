@@ -310,6 +310,7 @@ function linkProjectDetailButtons(wrapper, pagePurl) {
     const text = (link.textContent || '').replace(/\s+/g, ' ').trim();
     if (!/check\s*this\s*project/i.test(text)) continue;
     link.setAttribute('href', destination);
+    link.setAttribute('data-allow-project-link', 'true');
     link.removeAttribute('aria-disabled');
     link.removeAttribute('data-disabled-link');
     link.classList.remove('disabled-project-link');
@@ -606,7 +607,7 @@ export function transformCargoHtml({
       continue;
     }
 
-    if (/check\s*this\s*project/i.test(linkText)) {
+    if (/check\s*this\s*project/i.test(linkText) && link.dataset.allowProjectLink !== 'true') {
       link.setAttribute('href', '#');
       link.setAttribute('aria-disabled', 'true');
       link.setAttribute('data-disabled-link', 'true');
