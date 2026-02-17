@@ -5,6 +5,9 @@ import { manifest, toRoutePath, toSetSlugFromRouteSlug } from './lib/cargoData';
 import './styles/cargo-fonts.css';
 import './styles/base.css';
 
+const COMPLIANCE_SLUG = '/ai-cross-border-compliance';
+const PIPELINE_SLUG = '/markets-pipeline-dashboard';
+
 function SlugRoute() {
   const params = useParams();
   const rawSlug = params.slug || '';
@@ -33,8 +36,11 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate replace to={toRoutePath(manifest.homepageSlug)} />} />
-      <Route path="/projects/compliance" element={<ProjectDetailPage kind="compliance" />} />
-      <Route path="/projects/pipeline" element={<ProjectDetailPage kind="pipeline" />} />
+      <Route path={COMPLIANCE_SLUG} element={<ProjectDetailPage kind="compliance" />} />
+      <Route path={PIPELINE_SLUG} element={<ProjectDetailPage kind="pipeline" />} />
+      {/* Legacy paths */}
+      <Route path="/projects/compliance" element={<Navigate replace to={COMPLIANCE_SLUG} />} />
+      <Route path="/projects/pipeline" element={<Navigate replace to={PIPELINE_SLUG} />} />
       <Route path="/:slug" element={<SlugRoute />} />
       <Route path="*" element={<Navigate replace to={toRoutePath(manifest.homepageSlug)} />} />
     </Routes>

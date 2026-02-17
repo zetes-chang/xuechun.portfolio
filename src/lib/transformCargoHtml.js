@@ -299,8 +299,8 @@ function injectAiComplianceShowcase(wrapper, pagePurl) {
 function linkProjectDetailButtons(wrapper, pagePurl) {
   // Keep buttons but route them to our local project detail pages.
   const projectDestinations = {
-    '01-markets-pipeline-dashboard-copy': '/projects/compliance',
-    '01-markets-pipeline-dashboard-copy-copy': '/projects/pipeline'
+    '01-markets-pipeline-dashboard-copy': '/ai-cross-border-compliance',
+    '01-markets-pipeline-dashboard-copy-copy': '/markets-pipeline-dashboard'
   };
 
   const destination = projectDestinations[pagePurl];
