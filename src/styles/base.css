@@ -1101,7 +1101,8 @@ section.page[data-purl='header-get-hands-dirty'] {
   }
 
   section.page[data-purl='information'] .bio-kaleidoscope-pane {
-    padding: 0.8rem;
+    display: none;
+    padding: 0;
   }
 
   section.page[data-purl='information'] .bio-kaleidoscope-square {

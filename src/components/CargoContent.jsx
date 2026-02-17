@@ -5,7 +5,10 @@ import { transformCargoHtml } from '../lib/transformCargoHtml';
 
 const HERO_PURL = 'header-sales-experience-in-fintech';
 const BIO_PURL = 'information';
-const BIO_KALEIDOSCOPE_SOURCE = '/assets/local/bio-kaleidoscope-source.jpg';
+const BIO_KALEIDOSCOPE_SOURCES = [
+  '/assets/local/bio-kaleidoscope-flower.jpg',
+  '/assets/local/bio-kaleidoscope-source.jpg'
+];
 const HERO_INTRO_LINE = "Hey, I'm Xuechun";
 const HERO_ROTATING_PREFIX = 'I do:';
 const HERO_LEAD_SPACE = '\u2002';
@@ -166,10 +169,24 @@ function mountImageLightbox(root, cleanups) {
   });
 }
 
-function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY) {
+function clamp01(value) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+function lerpAngle(a, b, t) {
+  let delta = ((b - a + Math.PI) % (Math.PI * 2)) - Math.PI;
+  if (delta < -Math.PI) delta += Math.PI * 2;
+  return a + delta * t;
+}
+
+function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, phase) {
   const centerX = width / 2;
   const centerY = height / 2;
-  const coverScale = Math.max(width / image.width, height / image.height) * 1.52;
+  const coverScale = Math.max(width / image.width, height / image.height) * 1.62;
   const drawWidth = image.width * coverScale;
   const drawHeight = image.height * coverScale;
   const dx = pointerX - 0.5;
@@ -178,14 +195,15 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY) {
   const pointerRadius = Math.min(1, Math.hypot(dx, dy) / 0.7071);
   const panRangeX = Math.max(0, (drawWidth - width) * 0.5);
   const panRangeY = Math.max(0, (drawHeight - height) * 0.5);
-  const radialPanStrength = pointerRadius * 0.68;
+  const radialPanStrength = pointerRadius * 0.58;
   const panX = Math.cos(pointerAngle) * panRangeX * radialPanStrength;
   const panY = Math.sin(pointerAngle) * panRangeY * radialPanStrength;
-  const baseRotation = pointerAngle * 0.34;
-  const twist = (pointerRadius - 0.16) * 0.2;
-  const slices = 12;
+  const baseRotation = phase + pointerAngle * 0.12;
+  const twist = (pointerRadius - 0.2) * 0.12;
+  const slices = 20;
   const sliceAngle = (Math.PI * 2) / slices;
   const radius = Math.hypot(width, height) * 0.92;
+  const arcPad = sliceAngle * 0.02;
 
   ctx.clearRect(0, 0, width, height);
 
@@ -200,17 +218,16 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY) {
     const start = index * sliceAngle + baseRotation;
     const end = start + sliceAngle;
     const mid = (start + end) * 0.5;
-    const spokeDrift =
-      Math.cos(pointerAngle - mid) * pointerRadius * Math.min(width, height) * 0.11;
+    const spokeDrift = Math.cos(pointerAngle - mid) * pointerRadius * Math.min(width, height) * 0.075;
     const sourceOffsetX = panX + Math.cos(mid) * spokeDrift;
     const sourceOffsetY = panY + Math.sin(mid) * spokeDrift;
-    const sliceTwist = (index % 2 === 0 ? 1 : -1) * twist;
+    const sliceTwist = (index % 2 === 0 ? 1 : -1) * twist * 0.55;
 
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.arc(0, 0, radius, start, end, false);
+    ctx.arc(0, 0, radius, start - arcPad, end + arcPad, false);
     ctx.closePath();
     ctx.clip();
 
@@ -255,10 +272,13 @@ function mountBioKaleidoscope(root, cleanups) {
   const canvas = root.querySelector('.bio-kaleidoscope-canvas');
   if (!(canvas instanceof HTMLCanvasElement)) return;
 
+  if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) {
+    return;
+  }
+
   const sourceImageElement =
     root.querySelector('.bio-photo-grid .cargo-media-item img') || root.querySelector('.cargo-media-item img');
-  const sourceUrl = BIO_KALEIDOSCOPE_SOURCE || sourceImageElement?.currentSrc || sourceImageElement?.src || '';
-  if (!sourceUrl) return;
+  const fallbackUrl = sourceImageElement?.currentSrc || sourceImageElement?.src || '';
 
   const image = new Image();
   image.decoding = 'async';
@@ -273,6 +293,14 @@ function mountBioKaleidoscope(root, cleanups) {
   let currentY = 0.5;
   let targetX = 0.5;
   let targetY = 0.5;
+  let currentAngle = 0;
+  let targetAngle = 0;
+  let currentRadius = 0;
+  let targetRadius = 0;
+  let phase = 0;
+  let lastTime = 0;
+  let hovering = false;
+  let inView = true;
   let rafId = 0;
   let loaded = false;
 
@@ -286,29 +314,47 @@ function mountBioKaleidoscope(root, cleanups) {
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = 'high';
     if (loaded) {
-      drawKaleidoscopeFrame(context, image, width, height, currentX, currentY);
+      drawKaleidoscopeFrame(context, image, width, height, currentX, currentY, phase);
     }
+  };
+
+  const tick = (time) => {
+    rafId = 0;
+    if (!loaded || !inView) return;
+
+    const now = typeof time === 'number' ? time : performance.now();
+    const dt = lastTime ? Math.min(0.06, (now - lastTime) / 1000) : 0.016;
+    lastTime = now;
+
+    currentX = lerp(currentX, targetX, 0.14);
+    currentY = lerp(currentY, targetY, 0.14);
+    currentAngle = lerpAngle(currentAngle, targetAngle, 0.12);
+    currentRadius = lerp(currentRadius, targetRadius, 0.12);
+
+    const speed = (hovering ? 1.25 : 0.65) + currentRadius * 0.95;
+    phase += dt * speed;
+    if (phase > Math.PI * 2) phase -= Math.PI * 2;
+
+    drawKaleidoscopeFrame(context, image, width, height, currentX, currentY, phase + currentAngle * 0.18);
+
+    rafId = window.requestAnimationFrame(tick);
   };
 
   const scheduleRender = () => {
     if (rafId) return;
-    rafId = window.requestAnimationFrame(() => {
-      rafId = 0;
-      if (!loaded) return;
-      currentX += (targetX - currentX) * 0.14;
-      currentY += (targetY - currentY) * 0.14;
-      drawKaleidoscopeFrame(context, image, width, height, currentX, currentY);
-      if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
-        scheduleRender();
-      }
-    });
+    rafId = window.requestAnimationFrame(tick);
   };
 
   const setPointerTarget = (clientX, clientY) => {
     const rect = canvas.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return;
-    targetX = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
-    targetY = Math.min(1, Math.max(0, (clientY - rect.top) / rect.height));
+    targetX = clamp01((clientX - rect.left) / rect.width);
+    targetY = clamp01((clientY - rect.top) / rect.height);
+
+    const dx = targetX - 0.5;
+    const dy = targetY - 0.5;
+    targetAngle = Math.atan2(dy, dx);
+    targetRadius = clamp01(Math.hypot(dx, dy) / 0.7071);
     scheduleRender();
   };
 
@@ -316,9 +362,17 @@ function mountBioKaleidoscope(root, cleanups) {
     setPointerTarget(event.clientX, event.clientY);
   };
 
+  const onPointerEnter = () => {
+    hovering = true;
+    scheduleRender();
+  };
+
   const onPointerLeave = () => {
     targetX = 0.5;
     targetY = 0.5;
+    targetAngle = 0;
+    targetRadius = 0;
+    hovering = false;
     scheduleRender();
   };
 
@@ -333,17 +387,42 @@ function mountBioKaleidoscope(root, cleanups) {
     scheduleRender();
   });
 
-  image.src = sourceUrl;
+  const sources = [...BIO_KALEIDOSCOPE_SOURCES, fallbackUrl].filter(Boolean);
+  let sourceIndex = 0;
+  const tryNextSource = () => {
+    sourceIndex += 1;
+    if (sourceIndex >= sources.length) return;
+    image.src = sources[sourceIndex];
+  };
+  image.addEventListener('error', tryNextSource);
+  image.src = sources[sourceIndex] || '';
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      inView = entries.some((entry) => entry.isIntersecting);
+      if (inView) {
+        lastTime = 0;
+        scheduleRender();
+      }
+    },
+    { root: null, threshold: 0.05 }
+  );
+  observer.observe(canvas);
+
   canvas.addEventListener('pointermove', onPointerMove, { passive: true });
+  canvas.addEventListener('pointerenter', onPointerEnter);
   canvas.addEventListener('pointerleave', onPointerLeave);
   window.addEventListener('resize', onResize);
 
   cleanups.push(() => {
     canvas.removeEventListener('pointermove', onPointerMove);
+    canvas.removeEventListener('pointerenter', onPointerEnter);
     canvas.removeEventListener('pointerleave', onPointerLeave);
     window.removeEventListener('resize', onResize);
+    observer.disconnect();
     if (rafId) {
       window.cancelAnimationFrame(rafId);
+      rafId = 0;
     }
   });
 }
