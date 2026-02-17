@@ -99,18 +99,18 @@ body {
 }
 
 .project-detail-grid {
-  /* Detail pages: one image per row, full-bleed width. */
-  padding: 0;
+  /* Detail pages: one image per row, aligns to site max-width. */
+  padding-left: var(--project-inline-padding);
+  padding-right: var(--project-inline-padding);
+  padding-top: clamp(1.25rem, 2.8vw, 2.2rem);
+  padding-bottom: clamp(2.2rem, 5vw, 3.4rem);
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0;
+  gap: clamp(0.95rem, 2vw, 1.6rem);
 }
 
 .project-detail-figure {
   margin: 0;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
   border-radius: 0;
   overflow: hidden;
   background: transparent;

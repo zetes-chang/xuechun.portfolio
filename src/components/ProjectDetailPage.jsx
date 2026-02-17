@@ -41,7 +41,13 @@ export default function ProjectDetailPage({ kind }) {
         { src: `${basePath}/01.png`, alt: title },
         { src: `${basePath}/02.png`, alt: title },
         { src: `${basePath}/03.png`, alt: title },
-        { src: `${basePath}/04.png`, alt: title }
+        { src: `${basePath}/04.png`, alt: title },
+        { src: `${basePath}/05.png`, alt: title },
+        { src: `${basePath}/06.png`, alt: title },
+        { src: `${basePath}/07.png`, alt: title },
+        { src: `${basePath}/08.png`, alt: title },
+        { src: `${basePath}/09.png`, alt: title },
+        { src: `${basePath}/10.png`, alt: title }
       ];
 
   return (
