@@ -302,6 +302,7 @@ function linkProjectDetailButtons(wrapper, pagePurl) {
     '01-markets-pipeline-dashboard-copy': '/ai-cross-border-compliance',
     '01-markets-pipeline-dashboard-copy-copy': '/markets-pipeline-dashboard'
   };
+  const checkProjectLabel = 'Check this Project';
 
   const destination = projectDestinations[pagePurl];
   if (!destination) return;
@@ -311,9 +312,33 @@ function linkProjectDetailButtons(wrapper, pagePurl) {
     if (!/check\s*this\s*project/i.test(text)) continue;
     link.setAttribute('href', destination);
     link.setAttribute('data-allow-project-link', 'true');
+    link.textContent = checkProjectLabel;
+    link.classList.add('check-project-link');
     link.removeAttribute('aria-disabled');
     link.removeAttribute('data-disabled-link');
     link.classList.remove('disabled-project-link');
+  }
+}
+
+function normalizeCowEmissionsMeta(wrapper, pagePurl) {
+  if (pagePurl !== '11-cow-emissions-of') {
+    return;
+  }
+
+  const targetBlock = Array.from(wrapper.querySelectorAll('column-unit b')).find((node) => {
+    const text = (node.textContent || '').replace(/\s+/g, ' ');
+    return text.includes('Costume Performance') && text.includes('Public Events');
+  });
+  if (!targetBlock) return;
+
+  targetBlock.classList.add('cow-emissions-meta');
+
+  for (const span of Array.from(targetBlock.querySelectorAll('span[style]'))) {
+    span.removeAttribute('style');
+  }
+
+  for (const icon of Array.from(targetBlock.querySelectorAll('text-icon'))) {
+    icon.replaceWith(document.createTextNode(' · '));
   }
 }
 
@@ -419,7 +444,7 @@ function enhanceFooterLayout(wrapper, pagePurl) {
   linkedin.href = linkedinUrl;
   linkedin.target = '_blank';
   linkedin.rel = 'noopener noreferrer';
-  linkedin.textContent = 'LinkedIn ↗';
+  linkedin.textContent = 'LinkedIn';
   right.appendChild(linkedin);
 
   top.append(left, right);
@@ -514,6 +539,7 @@ export function transformCargoHtml({
   enhanceBioKaleidoscope(wrapper, pagePurl);
   injectAiComplianceShowcase(wrapper, pagePurl);
   linkProjectDetailButtons(wrapper, pagePurl);
+  normalizeCowEmissionsMeta(wrapper, pagePurl);
   normalizeSectionHeaderLayout(wrapper, pagePurl);
   normalizeProjectSpacing(wrapper, pagePurl);
 
@@ -608,10 +634,8 @@ export function transformCargoHtml({
     }
 
     if (/check\s*this\s*project/i.test(linkText) && link.dataset.allowProjectLink !== 'true') {
-      link.setAttribute('href', '#');
-      link.setAttribute('aria-disabled', 'true');
-      link.setAttribute('data-disabled-link', 'true');
-      link.classList.add('disabled-project-link');
+      // Remove orphan project CTA buttons that do not have a valid destination.
+      link.remove();
       continue;
     }
 

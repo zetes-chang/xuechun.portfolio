@@ -15,7 +15,7 @@ export default function SiteFooter() {
 
         <div className="custom-footer-right">
           <a className="custom-footer-linkedin" href={linkedinUrl} target="_blank" rel="noopener noreferrer">
-            LinkedIn ↗
+            LinkedIn
           </a>
         </div>
       </div>
@@ -26,4 +26,3 @@ export default function SiteFooter() {
     </footer>
   );
 }
-

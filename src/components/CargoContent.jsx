@@ -9,7 +9,7 @@ const BIO_KALEIDOSCOPE_SOURCES = [
   '/assets/local/bio-kaleidoscope-flower.jpg',
   '/assets/local/bio-kaleidoscope-source.jpg'
 ];
-const HERO_INTRO_LINE = "Hey, I'm Xuechun";
+const HERO_INTRO_LINE = "Hey, I'm Sophia";
 const HERO_ROTATING_PREFIX = 'I do:';
 const HERO_LEAD_SPACE = '\u2002';
 const HERO_TYPEWRITER_LINES = [
@@ -30,6 +30,8 @@ function isModifiedEvent(event) {
 }
 
 let sharedLightbox = null;
+const FROST_NOISE_TILE_SIZE = 160;
+let frostedNoisePattern = null;
 
 function ensureImageLightbox() {
   if (sharedLightbox) return sharedLightbox;
@@ -183,6 +185,105 @@ function lerpAngle(a, b, t) {
   return a + delta * t;
 }
 
+function getFrostNoisePattern(ctx) {
+  if (frostedNoisePattern) return frostedNoisePattern;
+
+  const noiseCanvas = document.createElement('canvas');
+  noiseCanvas.width = FROST_NOISE_TILE_SIZE;
+  noiseCanvas.height = FROST_NOISE_TILE_SIZE;
+  const noiseContext = noiseCanvas.getContext('2d', { alpha: true });
+  if (!noiseContext) return null;
+
+  const imageData = noiseContext.createImageData(FROST_NOISE_TILE_SIZE, FROST_NOISE_TILE_SIZE);
+  const { data } = imageData;
+  for (let index = 0; index < data.length; index += 4) {
+    const grain = 186 + Math.floor(Math.random() * 70);
+    const alpha = 14 + Math.floor(Math.random() * 50);
+    data[index] = grain;
+    data[index + 1] = grain;
+    data[index + 2] = grain;
+    data[index + 3] = alpha;
+  }
+  noiseContext.putImageData(imageData, 0, 0);
+
+  noiseContext.fillStyle = 'rgba(255, 255, 255, 0.2)';
+  for (let index = 0; index < 210; index += 1) {
+    const x = Math.random() * FROST_NOISE_TILE_SIZE;
+    const y = Math.random() * FROST_NOISE_TILE_SIZE;
+    const radius = Math.random() * 0.85 + 0.15;
+    noiseContext.beginPath();
+    noiseContext.arc(x, y, radius, 0, Math.PI * 2);
+    noiseContext.fill();
+  }
+
+  frostedNoisePattern = ctx.createPattern(noiseCanvas, 'repeat');
+  return frostedNoisePattern;
+}
+
+function drawFrostedGlassOverlay(ctx, width, height, phase, pointerRadius, centerX, centerY) {
+  const shimmerX = Math.cos(phase * 0.34) * width * 0.08;
+  const shimmerY = Math.sin(phase * 0.27) * height * 0.06;
+
+  const bloom = ctx.createRadialGradient(
+    centerX + shimmerX,
+    centerY - height * 0.04 + shimmerY,
+    Math.min(width, height) * 0.08,
+    centerX,
+    centerY,
+    Math.max(width, height) * 0.78
+  );
+  bloom.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+  bloom.addColorStop(0.38, 'rgba(238, 241, 255, 0.09)');
+  bloom.addColorStop(1, 'rgba(190, 178, 255, 0.03)');
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  ctx.fillStyle = bloom;
+  ctx.fillRect(0, 0, width, height);
+  ctx.restore();
+
+  const haze = ctx.createLinearGradient(0, 0, width, height);
+  haze.addColorStop(0, 'rgba(248, 244, 255, 0.1)');
+  haze.addColorStop(0.45, 'rgba(232, 238, 255, 0.03)');
+  haze.addColorStop(1, 'rgba(212, 220, 255, 0.08)');
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'soft-light';
+  ctx.globalAlpha = 0.9;
+  ctx.fillStyle = haze;
+  ctx.fillRect(0, 0, width, height);
+  ctx.restore();
+
+  const noisePattern = getFrostNoisePattern(ctx);
+  if (!noisePattern) return;
+
+  const driftX = ((phase * 34) % FROST_NOISE_TILE_SIZE) - FROST_NOISE_TILE_SIZE;
+  const driftY = ((phase * 22) % FROST_NOISE_TILE_SIZE) - FROST_NOISE_TILE_SIZE;
+  const noiseAreaWidth = width + FROST_NOISE_TILE_SIZE * 3;
+  const noiseAreaHeight = height + FROST_NOISE_TILE_SIZE * 3;
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'soft-light';
+  ctx.globalAlpha = 0.12 + pointerRadius * 0.06;
+  ctx.translate(driftX, driftY);
+  ctx.fillStyle = noisePattern;
+  ctx.fillRect(-FROST_NOISE_TILE_SIZE, -FROST_NOISE_TILE_SIZE, noiseAreaWidth, noiseAreaHeight);
+  ctx.restore();
+
+  const reverseX =
+    (((-phase * 17) % FROST_NOISE_TILE_SIZE) + FROST_NOISE_TILE_SIZE) % FROST_NOISE_TILE_SIZE -
+    FROST_NOISE_TILE_SIZE;
+  const reverseY = ((phase * 11) % FROST_NOISE_TILE_SIZE) - FROST_NOISE_TILE_SIZE;
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'overlay';
+  ctx.globalAlpha = 0.05;
+  ctx.translate(reverseX, reverseY);
+  ctx.fillStyle = noisePattern;
+  ctx.fillRect(-FROST_NOISE_TILE_SIZE, -FROST_NOISE_TILE_SIZE, noiseAreaWidth, noiseAreaHeight);
+  ctx.restore();
+}
+
 function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, phase) {
   const centerX = width / 2;
   const centerY = height / 2;
@@ -200,7 +301,7 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, ph
   const panY = Math.sin(pointerAngle) * panRangeY * radialPanStrength;
   const baseRotation = phase * 1.25 + pointerAngle * 0.08;
   const twist = (pointerRadius - 0.2) * 0.1;
-  const slices = 24;
+  const slices = 8;
   const sliceAngle = (Math.PI * 2) / slices;
   const radius = Math.hypot(width, height) * 0.92;
   const arcPad = sliceAngle * 0.06;
@@ -272,6 +373,8 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, ph
   sheen.addColorStop(1, 'rgba(255, 255, 255, 0.08)');
   ctx.fillStyle = sheen;
   ctx.fillRect(0, 0, width, height);
+
+  drawFrostedGlassOverlay(ctx, width, height, phase, pointerRadius, centerX, centerY);
 }
 
 function mountBioKaleidoscope(root, cleanups) {
@@ -339,7 +442,7 @@ function mountBioKaleidoscope(root, cleanups) {
     currentRadius = lerp(currentRadius, targetRadius, 0.12);
 
     // Slow baseline motion; slightly faster on hover and towards the edges.
-    const speed = (hovering ? 0.42 : 0.18) + currentRadius * 0.22;
+    const speed = (hovering ? 0.24 : 0.1) + currentRadius * 0.14;
     phase += dt * speed;
     if (phase > Math.PI * 2) phase -= Math.PI * 2;
 
