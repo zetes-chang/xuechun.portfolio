@@ -143,6 +143,7 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.24);
   overflow: visible;
   isolation: auto;
+  transition: background-color 200ms ease, border-bottom-color 200ms ease;
 }
 
 .site-header::before {
@@ -161,6 +162,12 @@ body {
   transform: translateX(-50%);
   width: min(100%, var(--site-max-width));
   z-index: 80;
+}
+
+.site-header.site-header--contrast {
+  /* Slightly deeper tinted glass when background is too bright. */
+  background: rgba(64, 46, 102, 0.38);
+  border-bottom-color: rgba(219, 206, 244, 0.46);
 }
 
 .site-header-nav {
@@ -596,7 +603,7 @@ body.lightbox-open {
   font-family: var(--site-font-sans);
   font-style: inherit;
   font-weight: 700;
-  font-size: clamp(1.12rem, 1.32vw, 1.52rem);
+  font-size: inherit;
   letter-spacing: inherit;
   line-height: inherit;
 }

@@ -321,25 +321,82 @@ function linkProjectDetailButtons(wrapper, pagePurl) {
 }
 
 function normalizeCowEmissionsMeta(wrapper, pagePurl) {
-  if (pagePurl !== '11-cow-emissions-of') {
+  const removeTargetLine = (node) => {
+    if (!node || !node.parentNode) return;
+
+    const parent = node.parentNode;
+    const prev = node.previousSibling;
+    const next = node.nextSibling;
+
+    node.remove();
+
+    // Trim extra visual gap left by adjacent <br> markers around removed line.
+    if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.tagName?.toLowerCase() === 'br') {
+      prev.remove();
+    }
+    if (next && next.nodeType === Node.ELEMENT_NODE && next.tagName?.toLowerCase() === 'br') {
+      next.remove();
+    }
+
+    if (parent.nodeType === Node.ELEMENT_NODE) {
+      for (const span of Array.from(parent.querySelectorAll('span[style]'))) {
+        if (!span.textContent?.trim()) span.remove();
+      }
+    }
+  };
+
+  if (pagePurl === '11-cow-emissions-of') {
+    const detailUnit = Array.from(wrapper.querySelectorAll('column-unit')).find((node) => {
+      const text = (node.textContent || '').replace(/\s+/g, ' ');
+      return text.includes('In this project, We explored different interventions for "cow\'s methane"');
+    });
+
+    if (detailUnit) {
+      detailUnit.innerHTML = detailUnit.innerHTML.replace(
+        /In\s*this\s*project,\s*We\s*explored\s*different\s*interventions\s*for\s*["“]cow['’]s methane["”]\s*through\s*design,\s*including\s*(<br\s*\/?>\s*){0,3}/i,
+        ''
+      );
+    }
+
+    const targetBlock = Array.from(wrapper.querySelectorAll('column-unit b')).find((node) => {
+      const text = (node.textContent || '').replace(/\s+/g, ' ');
+      return text.includes('Costume Performance') && text.includes('Methane Pool') && text.includes('Public Events');
+    });
+    if (targetBlock) {
+      removeTargetLine(targetBlock);
+    }
     return;
   }
 
-  const targetBlock = Array.from(wrapper.querySelectorAll('column-unit b')).find((node) => {
-    const text = (node.textContent || '').replace(/\s+/g, ' ');
-    return text.includes('Costume Performance') && text.includes('Public Events');
-  });
-  if (!targetBlock) return;
-
-  targetBlock.classList.add('cow-emissions-meta');
-
-  for (const span of Array.from(targetBlock.querySelectorAll('span[style]'))) {
-    span.removeAttribute('style');
+  if (pagePurl !== '10-before-wilderness-is-gone') {
+    return;
   }
 
-  for (const icon of Array.from(targetBlock.querySelectorAll('text-icon'))) {
+  const interventionsBlock = Array.from(wrapper.querySelectorAll('column-unit b')).find((node) => {
+    const text = (node.textContent || '').replace(/\s+/g, ' ');
+    return (
+      text.includes('Street Installations on micro-wilds') &&
+      text.includes('Nature') &&
+      text.includes('Urban Foraging Events')
+    );
+  });
+  if (!interventionsBlock) return;
+
+  for (const node of Array.from(interventionsBlock.querySelectorAll('[style]'))) {
+    node.removeAttribute('style');
+  }
+
+  for (const icon of Array.from(interventionsBlock.querySelectorAll('text-icon'))) {
     icon.replaceWith(document.createTextNode(' · '));
   }
+
+  // Keep content but remove forced bold/color wrappers so it inherits body typography.
+  const parent = interventionsBlock.parentNode;
+  if (!parent) return;
+  while (interventionsBlock.firstChild) {
+    parent.insertBefore(interventionsBlock.firstChild, interventionsBlock);
+  }
+  interventionsBlock.remove();
 }
 
 function setColumnUnitText(unit, value, className = '') {
@@ -354,6 +411,12 @@ function setColumnUnitText(unit, value, className = '') {
 
 function enforceLandingProjectHeader(wrapper, pagePurl) {
   const overrides = {
+    '04-intraday-credit-control': {
+      title: '06 Intraday Credit Control',
+      client: 'Citi WCR',
+      year: '2023',
+      spans: { title: '5', client: '3', year: '4' }
+    },
     '06-plaza-lively-floor-game': {
       title: '07 Plaza Lively Floor Game',
       client: 'NOWHERE / Seed Plaza',
