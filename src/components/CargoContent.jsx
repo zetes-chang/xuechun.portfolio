@@ -232,9 +232,9 @@ function drawFrostedGlassOverlay(ctx, width, height, phase, pointerRadius, cente
     centerY,
     Math.max(width, height) * 0.78
   );
-  bloom.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
-  bloom.addColorStop(0.38, 'rgba(238, 241, 255, 0.09)');
-  bloom.addColorStop(1, 'rgba(190, 178, 255, 0.03)');
+  bloom.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
+  bloom.addColorStop(0.38, 'rgba(238, 241, 255, 0.06)');
+  bloom.addColorStop(1, 'rgba(190, 178, 255, 0.015)');
 
   ctx.save();
   ctx.globalCompositeOperation = 'screen';
@@ -243,13 +243,13 @@ function drawFrostedGlassOverlay(ctx, width, height, phase, pointerRadius, cente
   ctx.restore();
 
   const haze = ctx.createLinearGradient(0, 0, width, height);
-  haze.addColorStop(0, 'rgba(248, 244, 255, 0.1)');
-  haze.addColorStop(0.45, 'rgba(232, 238, 255, 0.03)');
-  haze.addColorStop(1, 'rgba(212, 220, 255, 0.08)');
+  haze.addColorStop(0, 'rgba(248, 244, 255, 0.055)');
+  haze.addColorStop(0.45, 'rgba(232, 238, 255, 0.018)');
+  haze.addColorStop(1, 'rgba(212, 220, 255, 0.05)');
 
   ctx.save();
   ctx.globalCompositeOperation = 'soft-light';
-  ctx.globalAlpha = 0.9;
+  ctx.globalAlpha = 0.56;
   ctx.fillStyle = haze;
   ctx.fillRect(0, 0, width, height);
   ctx.restore();
@@ -264,7 +264,7 @@ function drawFrostedGlassOverlay(ctx, width, height, phase, pointerRadius, cente
 
   ctx.save();
   ctx.globalCompositeOperation = 'soft-light';
-  ctx.globalAlpha = 0.12 + pointerRadius * 0.06;
+  ctx.globalAlpha = 0.05 + pointerRadius * 0.03;
   ctx.translate(driftX, driftY);
   ctx.fillStyle = noisePattern;
   ctx.fillRect(-FROST_NOISE_TILE_SIZE, -FROST_NOISE_TILE_SIZE, noiseAreaWidth, noiseAreaHeight);
@@ -277,23 +277,35 @@ function drawFrostedGlassOverlay(ctx, width, height, phase, pointerRadius, cente
 
   ctx.save();
   ctx.globalCompositeOperation = 'overlay';
-  ctx.globalAlpha = 0.05;
+  ctx.globalAlpha = 0.022;
   ctx.translate(reverseX, reverseY);
   ctx.fillStyle = noisePattern;
   ctx.fillRect(-FROST_NOISE_TILE_SIZE, -FROST_NOISE_TILE_SIZE, noiseAreaWidth, noiseAreaHeight);
   ctx.restore();
 }
 
-function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, phase) {
+function drawKaleidoscopeFrame(
+  ctx,
+  image,
+  width,
+  height,
+  pointerX,
+  pointerY,
+  phase,
+  smoothedAngle = null,
+  smoothedRadius = null
+) {
   const centerX = width / 2;
   const centerY = height / 2;
-  const coverScale = Math.max(width / image.width, height / image.height) * 1.78;
+  const coverScale = Math.max(width / image.width, height / image.height) * 1.24;
   const drawWidth = image.width * coverScale;
   const drawHeight = image.height * coverScale;
   const dx = pointerX - 0.5;
   const dy = pointerY - 0.5;
-  const pointerAngle = Math.atan2(dy, dx);
-  const pointerRadius = Math.min(1, Math.hypot(dx, dy) / 0.7071);
+  const fallbackAngle = Math.atan2(dy, dx);
+  const fallbackRadius = Math.min(1, Math.hypot(dx, dy) / 0.7071);
+  const pointerAngle = Number.isFinite(smoothedAngle) ? smoothedAngle : fallbackAngle;
+  const pointerRadius = Number.isFinite(smoothedRadius) ? smoothedRadius : fallbackRadius;
   const panRangeX = Math.max(0, (drawWidth - width) * 0.5);
   const panRangeY = Math.max(0, (drawHeight - height) * 0.5);
   const radialPanStrength = pointerRadius * 0.38;
@@ -305,6 +317,8 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, ph
   const sliceAngle = (Math.PI * 2) / slices;
   const radius = Math.hypot(width, height) * 0.92;
   const arcPad = sliceAngle * 0.06;
+  const edgeStroke = Math.max(0.65, Math.min(1.15, Math.min(width, height) * 0.0011));
+  const edgeAlpha = 0.15 + pointerRadius * 0.07;
 
   // Avoid `clearRect()` with an opaque canvas: it can leave black pixels behind on some GPUs.
   ctx.fillStyle = '#0c1020';
@@ -326,9 +340,9 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, ph
     const sourceOffsetY = panY + Math.sin(mid) * spokeDrift;
     // Slight per-slice wobble breaks up the "flat" rotation and reads more radial.
     const wobble =
-      Math.sin(phase * 0.92 + index * 0.73) * 0.11 +
-      Math.cos(phase * 0.61 + index * 0.31) * 0.07;
-    const sliceTwist = (index % 2 === 0 ? 1 : -1) * twist * 0.35 + wobble * pointerRadius * 0.14;
+      Math.sin(phase * 0.92 + index * 0.73) * 0.07 +
+      Math.cos(phase * 0.61 + index * 0.31) * 0.04;
+    const sliceTwist = (index % 2 === 0 ? 1 : -1) * twist * 0.24 + wobble * pointerRadius * 0.1;
 
     ctx.save();
     ctx.translate(centerX, centerY);
@@ -352,6 +366,24 @@ function drawKaleidoscopeFrame(ctx, image, width, height, pointerX, pointerY, ph
     );
     ctx.restore();
   }
+
+  // Frosted prism seam lines: only the radial dividers between slices.
+  ctx.save();
+  ctx.translate(centerX, centerY);
+  ctx.rotate(baseRotation);
+  ctx.strokeStyle = `rgba(255, 255, 255, ${edgeAlpha})`;
+  ctx.lineWidth = edgeStroke;
+  ctx.lineCap = 'round';
+  for (let index = 0; index < slices; index += 1) {
+    const angle = index * sliceAngle;
+    const x = Math.cos(angle) * radius * 1.02;
+    const y = Math.sin(angle) * radius * 1.02;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+  ctx.restore();
 
   const vignette = ctx.createRadialGradient(
     centerX,
@@ -397,7 +429,7 @@ function mountBioKaleidoscope(root, cleanups) {
 
   let width = 0;
   let height = 0;
-  let dpr = Math.max(1, window.devicePixelRatio || 1);
+  let dpr = Math.max(1.25, window.devicePixelRatio || 1);
   let currentX = 0.5;
   let currentY = 0.5;
   let targetX = 0.5;
@@ -412,10 +444,10 @@ function mountBioKaleidoscope(root, cleanups) {
   let inView = true;
   let rafId = 0;
   let loaded = false;
-  let lastPointerEventTime = 0;
+  let lastPointerEventTime = performance.now();
 
   const updateSize = () => {
-    dpr = Math.max(1, window.devicePixelRatio || 1);
+    dpr = Math.max(1.25, window.devicePixelRatio || 1);
     width = Math.max(1, Math.round(canvas.clientWidth));
     height = Math.max(1, Math.round(canvas.clientHeight));
     canvas.width = Math.round(width * dpr);
@@ -424,7 +456,7 @@ function mountBioKaleidoscope(root, cleanups) {
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = 'high';
     if (loaded) {
-      drawKaleidoscopeFrame(context, image, width, height, currentX, currentY, phase);
+      drawKaleidoscopeFrame(context, image, width, height, currentX, currentY, phase, currentAngle, currentRadius);
     }
   };
 
@@ -436,9 +468,21 @@ function mountBioKaleidoscope(root, cleanups) {
     const dt = lastTime ? Math.min(0.06, (now - lastTime) / 1000) : 0.016;
     lastTime = now;
 
+    // Continuous idle drift (replaces interval steps that can cause stutter).
+    if (!hovering && now - lastPointerEventTime > 650) {
+      const t = now / 1000;
+      targetX = 0.5 + Math.cos(t * 0.18) * 0.06;
+      targetY = 0.5 + Math.sin(t * 0.16) * 0.06;
+      targetAngle = Math.atan2(targetY - 0.5, targetX - 0.5);
+      targetRadius = clamp01(Math.hypot(targetX - 0.5, targetY - 0.5) / 0.7071);
+    }
+
     currentX = lerp(currentX, targetX, 0.14);
     currentY = lerp(currentY, targetY, 0.14);
-    currentAngle = lerpAngle(currentAngle, targetAngle, 0.12);
+    // Near center, angle is unstable; keep it steady to avoid snap/rollback.
+    if (targetRadius > 0.015 || currentRadius > 0.02) {
+      currentAngle = lerpAngle(currentAngle, targetAngle, 0.11);
+    }
     currentRadius = lerp(currentRadius, targetRadius, 0.12);
 
     // Slow baseline motion; slightly faster on hover and towards the edges.
@@ -446,7 +490,17 @@ function mountBioKaleidoscope(root, cleanups) {
     phase += dt * speed;
     if (phase > Math.PI * 2) phase -= Math.PI * 2;
 
-    drawKaleidoscopeFrame(context, image, width, height, currentX, currentY, phase + currentAngle * 0.18);
+    drawKaleidoscopeFrame(
+      context,
+      image,
+      width,
+      height,
+      currentX,
+      currentY,
+      phase + currentAngle * 0.18,
+      currentAngle,
+      currentRadius
+    );
 
     rafId = window.requestAnimationFrame(tick);
   };
@@ -476,15 +530,17 @@ function mountBioKaleidoscope(root, cleanups) {
 
   const onPointerEnter = () => {
     hovering = true;
+    lastPointerEventTime = performance.now();
     scheduleRender();
   };
 
   const onPointerLeave = () => {
     targetX = 0.5;
     targetY = 0.5;
-    targetAngle = 0;
+    targetAngle = currentAngle;
     targetRadius = 0;
     hovering = false;
+    lastPointerEventTime = performance.now();
     scheduleRender();
   };
 
@@ -522,26 +578,12 @@ function mountBioKaleidoscope(root, cleanups) {
   );
   observer.observe(canvas);
 
-  // Gentle ambient drift even without pointer movement.
-  const idle = window.setInterval(() => {
-    if (!loaded || !inView) return;
-    const now = performance.now();
-    if (now - lastPointerEventTime < 650) return;
-    const t = now / 1000;
-    targetX = 0.5 + Math.cos(t * 0.18) * 0.06;
-    targetY = 0.5 + Math.sin(t * 0.16) * 0.06;
-    targetAngle = Math.atan2(targetY - 0.5, targetX - 0.5);
-    targetRadius = clamp01(Math.hypot(targetX - 0.5, targetY - 0.5) / 0.7071);
-    scheduleRender();
-  }, 120);
-
   canvas.addEventListener('pointermove', onPointerMove, { passive: true });
   canvas.addEventListener('pointerenter', onPointerEnter);
   canvas.addEventListener('pointerleave', onPointerLeave);
   window.addEventListener('resize', onResize);
 
   cleanups.push(() => {
-    window.clearInterval(idle);
     canvas.removeEventListener('pointermove', onPointerMove);
     canvas.removeEventListener('pointerenter', onPointerEnter);
     canvas.removeEventListener('pointerleave', onPointerLeave);
